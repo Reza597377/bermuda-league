@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🏝️ لیگ مجازی برمودا</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0e14">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="لیگ برمودا">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%230a0e14'/><text x='96' y='105' text-anchor='middle' font-size='85' fill='%23f0c060'>🏝️</text></svg>">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0a0e14;background-image:radial-gradient(ellipse at 20% 20%,rgba(60,120,255,0.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 60%,rgba(200,60,255,0.12) 0%,transparent 60%),radial-gradient(ellipse at 50% 90%,rgba(30,255,200,0.08) 0%,transparent 50%);min-height:100vh;color:#e0e0e0;display:flex;flex-direction:column;align-items:center;font-size:18px;line-height:1.6}
+    ::-webkit-scrollbar{width:8px}
+    ::-webkit-scrollbar-track{background:rgba(255,255,255,0.05);border-radius:10px}
+    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#f0c060,#e89750);border-radius:10px}
+    .glass{background:rgba(20,24,35,0.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.12);border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,0.5),0 0 40px rgba(255,215,0,0.08)}
+    .glass2{background:rgba(30,35,50,0.70);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.08);border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05)}
+    .neon-text{text-shadow:0 0 20px rgba(255,215,0,0.3),0 0 40px rgba(255,215,0,0.1)}
+    button{cursor:pointer;border:none;outline:none;transition:all 0.25s cubic-bezier(0.25,0.46,0.45,0.94);font-family:inherit;border-radius:16px;font-size:1.1rem;padding:16px 28px;color:#fff;font-weight:700;letter-spacing:0.5px;position:relative;overflow:hidden;min-height:54px}
+    button::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 70%);opacity:0;transition:opacity .3s}
+    button:hover::after{opacity:1}
+    button:active{transform:scale(0.94)}
+    .btn-green{background:linear-gradient(135deg,#43a86a,#2d8a4e);box-shadow:0 0 28px rgba(67,168,106,0.35)}
+    .btn-red{background:linear-gradient(135deg,#d94a4a,#b33030);box-shadow:0 0 28px rgba(217,74,74,0.35)}
+    .btn-blue{background:linear-gradient(135deg,#4a90d9,#3068b3);box-shadow:0 0 28px rgba(74,144,217,0.35)}
+    .btn-orange{background:linear-gradient(135deg,#e89750,#c87030);box-shadow:0 0 28px rgba(232,151,80,0.35)}
+    .btn-purple{background:linear-gradient(135deg,#9b6fd4,#6a40a8);box-shadow:0 0 28px rgba(155,111,212,0.35)}
+    .btn-gold{background:linear-gradient(135deg,#f0c060,#c89630);box-shadow:0 0 28px rgba(240,192,96,0.35);color:#1a1a1a}
+    .btn-dark{background:linear-gradient(135deg,#4a5a6a,#2a3440);box-shadow:0 0 20px rgba(0,0,0,0.4)}
+    .btn-sm{padding:10px 18px;font-size:0.95rem;border-radius:12px;min-height:42px}
+    .btn-xs{padding:6px 14px;font-size:0.8rem;border-radius:10px;min-height:34px}
+    .top-menu{display:flex;flex-wrap:wrap;gap:14px;padding:18px 24px;justify-content:center;position:sticky;top:0;z-index:100;background:rgba(10,14,20,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06);width:100%}
+    .menu-btn{padding:20px 32px;border-radius:20px;font-weight:700;font-size:1.4rem;letter-spacing:0.5px;min-width:100px;text-align:center;transition:all .2s;border:1px solid transparent;min-height:60px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .menu-btn.active{outline:3px solid #fff;outline-offset:4px;box-shadow:0 0 50px rgba(255,255,255,0.15)}
+    .notification-badge{background:#e05555;color:#fff;border-radius:50%;padding:2px 12px;font-size:0.85rem;font-weight:700;position:relative;top:-8px;right:-4px;box-shadow:0 0 20px rgba(224,85,85,0.5)}
+    input,select,textarea{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px 18px;color:#fff;font-family:inherit;font-size:1rem;outline:none;transition:all .2s;width:100%}
+    input:focus,select:focus,textarea:focus{border-color:#f0c060;box-shadow:0 0 24px rgba(240,192,96,0.12)}
+    .text-muted{color:#888}
+    .text-center{text-align:center}
+    .flex-wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+    .mt-8{margin-top:8px}
+    .mb-8{margin-bottom:8px}
+    .hidden{display:none !important}
+    .badge{display:inline-block;padding:4px 16px;border-radius:30px;font-size:0.85rem;font-weight:700;margin:2px 4px 2px 0}
+    .badge-foreign{background:rgba(100,160,220,0.3);color:#8cc8ff}
+    .badge-local{background:rgba(100,200,130,0.3);color:#8cf0a0}
+    .badge-sale{background:rgba(240,150,50,0.3);color:#f0b860}
+    .badge-starter{background:rgba(200,160,60,0.3);color:#f0d080}
+    .msg-error{color:#e05555;font-weight:bold;margin-top:8px}
+    .main-container{width:100%;max-width:1000px;padding:24px;flex:1}
+    .card{padding:28px;margin:16px 0;border-radius:28px}
+    .card h2{font-size:2rem;margin-bottom:16px;color:#f0c060;text-shadow:0 0 30px rgba(240,192,96,0.2)}
+    .card h3{font-size:1.4rem;margin-bottom:10px;color:#d0d8e0}
+    .card h4{font-size:1.1rem;margin:12px 0 8px;color:#b0b8c0}
+    .chat-box{max-height:400px;overflow-y:auto;padding:16px;border-radius:16px;background:rgba(0,0,0,0.25)}
+    .news-item{padding:14px 18px;margin:10px 0;border-radius:14px;background:rgba(255,255,255,0.03);border-right:4px solid #f0c060;transition:all .2s;position:relative}
+    .news-item .sender{font-weight:700;color:#b0c8f0;font-size:1.05rem}
+    .news-item .time{font-size:0.8rem;color:#888;margin-right:10px}
+    .dots-btn{position:absolute;top:8px;left:8px;background:rgba(255,255,255,0.1);border:none;color:#ccc;border-radius:50%;width:28px;height:28px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;line-height:1}
+    .dots-btn:hover{background:rgba(255,255,255,0.2)}
+    .dropdown-menu{position:absolute;top:36px;left:8px;background:#1e2332;border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:4px 0;z-index:10;min-width:120px;box-shadow:0 8px 24px rgba(0,0,0,0.6)}
+    .dropdown-menu button{display:block;width:100%;padding:8px 16px;background:transparent;color:#e05555;border:none;text-align:right;font-size:0.9rem;cursor:pointer;min-height:auto;border-radius:0}
+    .dropdown-menu button:hover{background:rgba(255,255,255,0.1)}
+    .overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:center;justify-content:center}
+    .modal{max-width:580px;width:94%;max-height:85vh;overflow-y:auto;padding:30px;border-radius:32px}
+    .history-item{padding:14px 18px;margin:8px 0;border-radius:16px;background:rgba(255,255,255,0.03);border-right:4px solid #f0c060;transition:all .2s}
+    .history-item .text{font-size:1rem;line-height:1.7}
+    .history-item .time{font-size:0.8rem;color:#888;display:block;margin-top:6px}
+    @media(max-width:700px){body{font-size:16px}.top-menu{gap:8px;padding:12px 14px}.menu-btn{padding:14px 20px;font-size:1rem;min-width:70px;min-height:48px}.card{padding:18px}.card h2{font-size:1.5rem}button{font-size:1rem;padding:14px 20px;min-height:48px}input,select,textarea{font-size:0.95rem;padding:12px 14px}}
+    @media(max-width:480px){.top-menu{gap:5px;padding:8px 6px}.menu-btn{padding:10px 14px;font-size:0.8rem;min-width:55px;min-height:40px;border-radius:14px}}
+  </style>
+</head>
+<body>
+
+  <nav class="top-menu" id="topMenu">
+    <button type="button" class="menu-btn btn-green" data-page="team">⚽ تیم</button>
+    <button type="button" class="menu-btn btn-orange" data-page="transfer">🔄 نقل</button>
+    <button type="button" class="menu-btn btn-blue" data-page="news">📰 اخبار</button>
+    <button type="button" class="menu-btn btn-gold" data-page="inbox">📬 صندوق <span class="notification-badge hidden" id="inboxBadge">0</span></button>
+    <button type="button" class="menu-btn btn-purple hidden" data-page="agent" id="btnAgent">🎙️ نماینده</button>
+    <button type="button" class="menu-btn btn-red hidden" data-page="admin" id="btnAdmin">🔐 مدیریت</button>
+    <button type="button" class="menu-btn btn-dark hidden" data-page="seasonSettings" id="btnSeasonSettings">⚙️ تنظیمات سیزن</button>
+    <button type="button" class="menu-btn btn-dark hidden" data-page="starters" id="btnStarters">🎯 بازیکنان اولیه</button>
+    <button type="button" class="menu-btn btn-dark hidden" data-page="settings" id="btnSettings">⚙️ تنظیمات</button>
+    <button type="button" class="menu-btn btn-red" id="btnLogout" style="background:linear-gradient(135deg,#555,#333);">🚪 خروج</button>
+  </nav>
+
+  <div class="main-container" id="mainContent"></div>
+
+  <div class="overlay hidden" id="overlay">
+    <div class="modal glass" id="modalContent"></div>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ========== SECURITY: HTML sanitizer ==========
+      function escapeHTML(str) {
+        if (typeof str !== 'string') return str;
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      const SUPABASE_URL = 'https://hwhqodifuzpdiiuctlsd.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_01Zk5XADP11Kc6DCWAuStA_yxh7XOyQ';
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const ADMIN_SOROUSH = 'Reza_Bermuda';
+
+      const STORAGE_KEY = 'bermuda_league_data_final';
+      const SYNC_INTERVAL = 1200;
+      const MAX_NEWS = 200;
+      const MAX_INBOX = 200;
+      const MAX_NEG_MSGS = 100;
+      const MAX_TRANSFER_HISTORY = 100;
+      let broadcastChannel = null;
+      try { broadcastChannel = new BroadcastChannel('bermuda_sync'); } catch(e) {}
+
+      const MIN_PLAYERS = 18;
+      const MAX_PLAYERS = 32;
+
+      const DEFAULT_DB = {
+        users: [],
+        teams: [],
+        players: [],
+        newsPosts: [],
+        chatBanned: [],
+        chatTempBanned: [],
+        requests: [],
+        inboxMessages: [],
+        appOff: false,
+        negotiations: [],
+        transferHistory: [],
+        playerIdCounter: 1,
+        teamIdCounter: 100,
+        seasonSettings: { 
+          transfersOpen: true, 
+          registrationOpen: true,
+          premierBudget: 500,
+          championshipBudget: 300,
+          premierForeign: 8,
+          premierLocal: 9,
+          championshipForeign: 6,
+          championshipLocal: 8
+        },
+        _lastUpdate: 0
+      };
+
+      let DB = null, syncTimer = null, isSaving = false, saveQueue = false;
+      let currentUser = null, currentPage = 'login';
+      let currentAdminSub = null;
+      let localChangePending = false;
+      let initialSyncDone = false; // CRITICAL: prevent pushing empty DB over cloud
+
+      function isForeignPlayer(nationality) {
+        return nationality !== 'برمودا' && nationality !== 'انگلیس';
+      }
+
+      async function saveToCloud() {
+        if (!initialSyncDone) return;
+        if (!navigator.onLine) return; // بدون اینترنت ذخیره نکن
+        
+        // **چک کن ابر از ما جدیدتر نباشه**
+        try {
+          const { data } = await supabase.from('bermuda_data').select('details').eq('id', 1).single();
+          if (data && data.details) {
+            const cloudUpdate = data.details._lastUpdate || 0;
+            if (cloudUpdate > (DB._lastUpdate || 0)) {
+              // ابر از ما جدیدتره - ما نباید روش بنویسیم
+              console.log('⛔ ابر جدیدتره، ذخیره نکردم');
+              return;
+            }
+          }
+        } catch(e) {}
+
+        const now = Date.now();
+        DB._lastUpdate = now;
+        localChangePending = true;
+        try {
+          await supabase.from('bermuda_data').upsert({ 
+            id: 1, 
+            details: DB,
+            updated_at: new Date().toISOString()
+          });
+          setTimeout(() => { localChangePending = false; }, 500);
+        } catch(e) {
+          localChangePending = false;
+        }
+      }
+
+      async function loadFromCloud() {
+        if (localChangePending) return;
+        try {
+          const { data } = await supabase.from('bermuda_data').select('details').eq('id', 1).single();
+          if (data && data.details) {
+            const cloudUpdate = data.details._lastUpdate || 0;
+            if (cloudUpdate > (DB._lastUpdate || 0)) {
+              const currentUsername = currentUser?.username;
+              DB = { ...DEFAULT_DB, ...data.details };
+              if (currentUsername) {
+                currentUser = DB.users.find(u => u.username === currentUsername) || null;
+              }
+              if (currentUser && currentPage) renderPage(currentPage);
+            }
+          }
+        } catch(e) {}
+      }
+
+      function subscribeToChanges() {
+        supabase.channel('bermuda_changes')
+          .on('postgres_changes', 
+            { event: 'UPDATE', schema: 'public', table: 'bermuda_data' },
+            (payload) => {
+              if (localChangePending) return;
+              if (payload.new && payload.new.details) {
+                const cloudUpdate = payload.new.details._lastUpdate || 0;
+                if (cloudUpdate > (DB._lastUpdate || 0)) {
+                  const currentUsername = currentUser?.username;
+                  DB = { ...DEFAULT_DB, ...payload.new.details };
+                  if (currentUsername) {
+                    currentUser = DB.users.find(u => u.username === currentUsername) || null;
+                  }
+                  if (currentUser && currentPage) renderPage(currentPage);
+                }
+              }
+            }
+          )
+          .subscribe();
+      }
+
+      function loadDB() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          try { 
+            DB = { ...DEFAULT_DB, ...JSON.parse(saved) }; 
+          } catch(e) { 
+            DB = JSON.parse(JSON.stringify(DEFAULT_DB)); 
+          }
+        } else {
+          DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+        }
+        
+        // ** اگه DB فقط ادمین داره (یعنی خالیه)، صبر کن از ابر بخونه **
+        if (DB.users.length <= 1 && !DB._lastUpdate) {
+          DB._lastUpdate = 0; // این باعث میشه حتماً از ابر بخونه
+        }
+      }
+
+      function ensureAdminAndDefaults() {
+        if (!DB.users.find(u => u.username === 'رضا برمودا')) {
+          DB.users.push({ username: 'رضا برمودا', password: 'Ali147', role: 'admin', soroushId: '', banned: false });
+        }
+        
+        if (DB.teams.length === 0) {
+          DB.teams.push(
+            { id: DB.teamIdCounter++, name: 'منچسترسیتی', league: 'پرمیر لیگ', manager: null, budget: DB.seasonSettings.premierBudget || 500, foreignQuota: DB.seasonSettings.premierForeign || 8, localQuota: DB.seasonSettings.premierLocal || 9 },
+            { id: DB.teamIdCounter++, name: 'آرسنال', league: 'پرمیر لیگ', manager: null, budget: DB.seasonSettings.premierBudget || 500, foreignQuota: DB.seasonSettings.premierForeign || 8, localQuota: DB.seasonSettings.premierLocal || 9 },
+            { id: DB.teamIdCounter++, name: 'لیورپول', league: 'پرمیر لیگ', manager: null, budget: DB.seasonSettings.premierBudget || 500, foreignQuota: DB.seasonSettings.premierForeign || 8, localQuota: DB.seasonSettings.premierLocal || 9 },
+            { id: DB.teamIdCounter++, name: 'چلسی', league: 'پرمیر لیگ', manager: null, budget: DB.seasonSettings.premierBudget || 500, foreignQuota: DB.seasonSettings.premierForeign || 8, localQuota: DB.seasonSettings.premierLocal || 9 }
+          );
+        }
+        
+        if (!DB.seasonSettings) {
+          DB.seasonSettings = { 
+            transfersOpen: true, registrationOpen: true,
+            premierBudget: 500, championshipBudget: 300,
+            premierForeign: 8, premierLocal: 9,
+            championshipForeign: 6, championshipLocal: 8
+          };
+        }
+        if (!DB.chatTempBanned) DB.chatTempBanned = [];
+        if (!DB.newsPosts) DB.newsPosts = [];
+        if (!DB.requests) DB.requests = [];
+        if (!DB.inboxMessages) DB.inboxMessages = [];
+        if (!DB.negotiations) DB.negotiations = [];
+        if (!DB.transferHistory) DB.transferHistory = [];
+        
+        while (DB.newsPosts.length > MAX_NEWS) DB.newsPosts.shift();
+        while (DB.inboxMessages.length > MAX_INBOX) DB.inboxMessages.shift();
+        while (DB.transferHistory.length > MAX_TRANSFER_HISTORY) DB.transferHistory.shift();
+        DB.negotiations.forEach(neg => {
+          while (neg.messages && neg.messages.length > MAX_NEG_MSGS) neg.messages.shift();
+        });
+      }
+
+      function saveDB(notify = true) {
+        if (isSaving) { saveQueue = true; return; }
+        isSaving = true;
+        saveQueue = false;
+        
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+          saveToCloud();
+          if (broadcastChannel && notify) {
+            broadcastChannel.postMessage({ type: 'sync', time: DB._lastUpdate });
+          }
+        } catch(e) {}
+        
+        isSaving = false;
+        if (saveQueue) saveDB(notify);
+      }
+
+      if (broadcastChannel) {
+        broadcastChannel.onmessage = function(e) {
+          if (e.data && e.data.type === 'sync') {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+              try {
+                const parsed = JSON.parse(saved);
+                if (parsed._lastUpdate > (DB._lastUpdate || 0)) {
+                  const currentUsername = currentUser?.username;
+                  DB = { ...DEFAULT_DB, ...parsed };
+                  if (currentUsername) {
+                    currentUser = DB.users.find(u => u.username === currentUsername) || null;
+                  }
+                  if (currentUser) renderPage(currentPage);
+                }
+              } catch(e) {}
+            }
+          }
+        };
+      }
+
+      function startSync() {
+        if (syncTimer) clearInterval(syncTimer);
+        syncTimer = setInterval(async () => {
+          await loadFromCloud();
+        }, SYNC_INTERVAL);
+      }
+
+      function isAdmin() { return currentUser && currentUser.role === 'admin'; }
+      function isAgent() { return currentUser && currentUser.role === 'agent'; }
+      function isObserver() { return currentUser && currentUser.role === 'observer'; }
+      function isStarterManager() { return currentUser && currentUser.role === 'starter_manager'; }
+      function isNewsAdmin() { return currentUser && currentUser.role === 'news_admin'; }
+      function hasTeam() { return currentUser && DB.teams.some(t => t.manager === currentUser.username); }
+      function getUserTeam() { return currentUser ? DB.teams.find(t => t.manager === currentUser.username) || null : null; }
+      function getTeamPlayers(teamId) { return DB.players.filter(p => p.teamId === teamId); }
+
+      function addInboxMessage(to, text, type = 'info') {
+        DB.inboxMessages.push({ id: Date.now() + Math.random(), to, text, type, read: false, time: new Date().toLocaleString('fa-IR') });
+        while (DB.inboxMessages.length > MAX_INBOX) DB.inboxMessages.shift();
+        saveDB();
+        if (currentUser && currentUser.username === to) updateInboxBadge();
+      }
+
+      function addNews(sender, text, isAuto = false) {
+        const enhancedText = isAuto ? enhanceNewsText(text) : text;
+        DB.newsPosts.push({ id: Date.now() + Math.random(), sender, text: enhancedText, time: new Date().toLocaleString('fa-IR'), auto: isAuto });
+        while (DB.newsPosts.length > MAX_NEWS) DB.newsPosts.shift();
+        saveDB();
+      }
+
+      function pushNegMessage(neg, sender, text) {
+        neg.messages.push({ sender, text });
+        while (neg.messages.length > MAX_NEG_MSGS) neg.messages.shift();
+      }
+
+      function enhanceNewsText(text) {
+        const templates = [
+          `🚨 فوری: ${text}`,
+          `💥 شوک به لیگ: ${text}`,
+          `📢 اعلامیه رسمی: ${text}`,
+          `🌟 خبر ویژه: ${text}`,
+          `🔥 داغ داغ: ${text}`,
+          `🏆 در خبری مهم: ${text}`,
+          `⚡️ اتفاقی بزرگ: ${text}`
+        ];
+        return templates[Math.floor(Math.random() * templates.length)];
+      }
+
+      function showToast(msg, isError = false) {
+        const toast = document.createElement('div');
+        toast.textContent = msg;
+        Object.assign(toast.style, {
+          position: 'fixed', bottom: '30px', left: '50%', transform: 'translateX(-50%)', zIndex: '999',
+          maxWidth: '90%', padding: '16px 32px', borderRadius: '40px',
+          background: isError ? 'rgba(200,50,50,0.92)' : 'rgba(240,192,96,0.92)',
+          color: '#fff', fontWeight: 'bold', fontSize: '1.05rem',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)'
+        });
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4500);
+      }
+
+      function updateInboxBadge() {
+        const badge = document.getElementById('inboxBadge');
+        if (!currentUser) { badge.classList.add('hidden'); return; }
+        const unread = DB.inboxMessages.filter(m => m.to === currentUser.username && !m.read).length;
+        badge.textContent = unread;
+        badge.classList.toggle('hidden', unread === 0);
+      }
+
+      function updateMenuButtons(activePage) {
+        document.querySelectorAll('.menu-btn[data-page]').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.page === activePage);
+        });
+      }
+
+      function updateRoleButtons() {
+        document.getElementById('btnAgent').classList.toggle('hidden', !isAgent());
+        document.getElementById('btnAdmin').classList.toggle('hidden', !isAdmin());
+        document.getElementById('btnSeasonSettings').classList.toggle('hidden', !isAdmin());
+        document.getElementById('btnStarters').classList.toggle('hidden', !isStarterManager() && !isAdmin());
+        document.getElementById('btnSettings').classList.toggle('hidden', !isAdmin());
+      }
+
+      function renderPage(page) {
+        currentPage = page;
+        const container = document.getElementById('mainContent');
+        if (!container) return;
+        updateMenuButtons(page);
+        updateRoleButtons();
+        updateInboxBadge();
+
+        if (DB.appOff && !isAdmin() && page !== 'login') {
+          container.innerHTML = `<div class="card glass text-center" style="padding:60px 20px;"><h2 style="color:#e05555;">⛔ برنامه توسط مالک متوقف شده است</h2><p class="text-muted" style="margin-top:12px;">لطفاً بعداً مراجعه کنید.</p></div>`;
+          return;
+        }
+
+        switch (page) {
+          case 'login': renderLogin(); break;
+          case 'team': renderTeamPage(); break;
+          case 'transfer': renderTransferPage(); break;
+          case 'news': renderNewsPage(); break;
+          case 'inbox': renderInboxPage(); break;
+          case 'agent': if (isAgent()) renderAgentPanel(); else renderTeamPage(); break;
+          case 'admin': if (isAdmin()) renderAdminPanel(); else renderTeamPage(); break;
+          case 'seasonSettings': if (isAdmin()) renderSeasonSettings(); else renderTeamPage(); break;
+          case 'starters': if (isStarterManager() || isAdmin()) renderStarterPanel(); else renderTeamPage(); break;
+          case 'settings': if (isAdmin()) renderSettingsPage(); else renderTeamPage(); break;
+          default: renderTeamPage();
+        }
+      }
+
+      function closeAllDropdowns() {
+        document.querySelectorAll('.dropdown-menu').forEach(d => d.remove());
+      }
+
+      // ========== LOGIN ==========
+      function renderLogin() {
+        const container = document.getElementById('mainContent');
+        container.innerHTML = `
+        <div class="card glass" style="max-width:480px;margin:50px auto;text-align:center;">
+          <h1 style="font-size:2.8rem;margin-bottom:8px;" class="neon-text">🏝️ لیگ مجازی برمودا</h1>
+          <p style="color:#aaa;margin-bottom:28px;">به بزرگترین لیگ مجازی خوش آمدید</p>
+          <div id="loginForm">
+            <input type="text" id="loginUser" placeholder="نام کاربری" style="margin:10px 0;">
+            <input type="password" id="loginPass" placeholder="رمز عبور" style="margin:10px 0;">
+            <button type="button" class="btn-blue" onclick="window._doLogin()" style="width:100%;margin-top:12px;">🔑 ورود</button>
+            <button type="button" class="btn-green" onclick="window._showRegister()" style="width:100%;margin-top:8px;">📝 ثبت نام</button>
+            <div id="loginError"></div>
+            <div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.1);">
+  <a href="https://splus.ir/joingroup/ALY2XSME-R2ec_7BhRG1NQ" target="_blank" style="color:#f0c060; text-decoration:none; font-size:0.9rem;">
+    📢 کانال رسمی لیگ در سروش
+  </a>
+  <br>
+  <span style="color:#aaa; font-size:0.8rem;">@Pes_Bermuda</span>
+</div>
+          </div>
+          <div id="registerForm" class="hidden">
+            <input type="text" id="regUser" placeholder="نام کاربری" style="margin:10px 0;">
+            <input type="text" id="regSoroush" placeholder="ایدی سروش" style="margin:10px 0;">
+            <input type="password" id="regPass" placeholder="رمز عبور" style="margin:10px 0;">
+            <input type="password" id="regPass2" placeholder="تکرار رمز عبور" style="margin:10px 0;">
+            <button type="button" class="btn-green" onclick="window._doRegister()" style="width:100%;margin-top:12px;">✅ ثبت نام</button>
+            <button type="button" class="btn-dark" onclick="window._showLogin()" style="width:100%;margin-top:8px;">↩️ بازگشت</button>
+            <div id="regError"></div>
+            <div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.1);">
+  <a href="https://splus.ir/joingroup/ALY2XSME-R2ec_7BhRG1NQ" target="_blank" style="color:#f0c060; text-decoration:none; font-size:0.9rem;">
+    📢 کانال رسمی لیگ در سروش
+  </a>
+  <br>
+  <span style="color:#aaa; font-size:0.8rem;">@Pes_Bermuda</span>
+</div>
+          </div>
+        </div>`;
+        document.getElementById('topMenu').style.display = 'none';
+      }
+
+      window._doLogin = function() {
+      if (!navigator.onLine) {
+  showToast('⚠️ برای ورود، اینترنت باید روشن باشد.', true);
+  return;
+}
+        const username = document.getElementById('loginUser').value.trim();
+        const password = document.getElementById('loginPass').value.trim();
+        const errEl = document.getElementById('loginError');
+        if (!username || !password) { errEl.innerHTML = '<div class="msg-error">لطفاً تمام فیلدها را پر کنید</div>'; return; }
+        const user = DB.users.find(u => u.username === username && u.password === password);
+        if (!user) { errEl.innerHTML = '<div class="msg-error">نام کاربری یا رمز عبور اشتباه است</div>'; return; }
+        if (user.banned) { errEl.innerHTML = '<div class="msg-error">⛔ شما بن شده‌اید!</div>'; return; }
+        if (DB.appOff && user.role !== 'admin') { errEl.innerHTML = '<div class="msg-error">⛔ برنامه توسط مالک متوقف شده است</div>'; return; }
+        currentUser = user;
+        document.getElementById('topMenu').style.display = 'flex';
+        updateRoleButtons();
+        updateInboxBadge();
+        renderPage('team');
+      };
+
+      window._showRegister = function() { document.getElementById('loginForm').classList.add('hidden'); document.getElementById('registerForm').classList.remove('hidden'); };
+      window._showLogin = function() { document.getElementById('registerForm').classList.add('hidden'); document.getElementById('loginForm').classList.remove('hidden'); };
+      window._doRegister = function() {
+      if (!navigator.onLine) {
+  showToast('⚠️ برای ثبت‌نام، اینترنت باید روشن باشد.', true);
+  return;
+}
+        const username = document.getElementById('regUser').value.trim();
+        const soroushId = document.getElementById('regSoroush').value.trim();
+        const pass = document.getElementById('regPass').value.trim();
+        const pass2 = document.getElementById('regPass2').value.trim();
+        const errEl = document.getElementById('regError');
+        if (!username || !soroushId || !pass) { errEl.innerHTML = '<div class="msg-error">لطفاً تمام فیلدها را پر کنید</div>'; return; }
+        if (pass !== pass2) { errEl.innerHTML = '<div class="msg-error">رمز عبور مطابقت ندارد</div>'; return; }
+        if (DB.users.find(u => u.username === username)) { errEl.innerHTML = '<div class="msg-error">این نام کاربری قبلاً ثبت شده است</div>'; return; }
+        const newUser = { username, password: pass, role: 'user', soroushId, banned: false };
+        DB.users.push(newUser);
+        saveDB();
+        currentUser = newUser;
+        document.getElementById('topMenu').style.display = 'flex';
+        updateRoleButtons();
+        updateInboxBadge();
+        renderPage('team');
+      };
+
+      // ========== TEAM PAGE ==========
+      function renderTeamPage() {
+        const container = document.getElementById('mainContent');
+        const team = getUserTeam();
+        if (!team) {
+          container.innerHTML = `
+          <div class="card glass text-center" style="padding:50px;">
+            <h2>⚽ منوی تیم</h2>
+            <p class="text-muted">شما هنوز تیمی ندارید</p>
+            ${DB.seasonSettings.registrationOpen ? `<button type="button" class="btn-green" onclick="window._registerTeam()" style="margin-top:20px;">📝 ثبت نام در لیگ</button>` : `<p class="text-muted" style="color:#e05555;">⛔ ثبت نام تیم در این فصل بسته شده است</p>`}
+          </div>`;
+          return;
+        }
+        const players = getTeamPlayers(team.id);
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>⚽ داشبورد تیم: <span style="color:#f0c060;">${escapeHTML(team.name)}</span></h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0;">
+              <div class="glass2" style="padding:16px;border-radius:16px;"><span style="color:#888;">🏆 لیگ</span><br><strong style="font-size:1.3rem;">${escapeHTML(team.league)}</strong></div>
+              <div class="glass2" style="padding:16px;border-radius:16px;"><span style="color:#888;">💰 بودجه</span><br><strong style="font-size:1.3rem;color:#f0c060;">${team.budget.toLocaleString()} M</strong></div>
+              <div class="glass2" style="padding:16px;border-radius:16px;"><span style="color:#888;">🌍 سهمیه خارجی</span><br><strong style="font-size:1.3rem;">${team.foreignQuota}</strong></div>
+              <div class="glass2" style="padding:16px;border-radius:16px;"><span style="color:#888;">🇧🇲 سهمیه داخلی</span><br><strong style="font-size:1.3rem;">${team.localQuota}</strong></div>
+              <div class="glass2" style="padding:16px;border-radius:16px;grid-column:span 2;"><span style="color:#888;">👥 تعداد بازیکنان</span><br><strong style="font-size:1.3rem;">${players.length}</strong></div>
+            </div>
+          </div>
+          <div class="card glass2"><h3>👕 بازیکنان تیم</h3><div id="teamPlayersList"></div></div>
+          <div class="flex-wrap" style="margin-top:14px;">
+            ${DB.seasonSettings.transfersOpen ? `<button type="button" class="btn-orange" onclick="window._sellPlayer()">💰 فروش بازیکن</button>` : `<span class="text-muted" style="color:#e05555;">⛔ نقل و انتقالات بسته است</span>`}
+            ${DB.seasonSettings.transfersOpen ? `<button type="button" class="btn-purple" onclick="window._tradePlayer()">🔄 معاوضه بازیکن</button>` : ''}
+            <button type="button" class="btn-gold" onclick="window._buyBudget()">💳 خرید بودجه</button>
+          </div>`;
+        renderTeamPlayers(team);
+      }
+
+      function renderTeamPlayers(team) {
+        const el = document.getElementById('teamPlayersList');
+        if (!el) return;
+        const players = getTeamPlayers(team.id);
+        if (players.length === 0) { el.innerHTML = '<p class="text-muted">هیچ بازیکنی در تیم وجود ندارد</p>'; return; }
+        el.innerHTML = players.map(p => {
+          const isStarter = p.isStarter && p.teamId === team.id;
+          return `<div class="glass2" style="padding:14px 18px;margin:8px 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px;border-radius:16px;">
+            <span style="font-weight:700;font-size:1.1rem;">${escapeHTML(p.name)}</span>
+            <span style="color:#aaa;">| ${escapeHTML(p.position)}</span>
+            <span class="badge ${isForeignPlayer(p.nationality)?'badge-foreign':'badge-local'}">${isForeignPlayer(p.nationality)?'🌍 خارجی':'🇧🇲 داخلی'}</span>
+            ${isStarter ? '<span class="badge badge-starter">🎯 اولیه</span>' : ''}
+            ${p.forSale ? '<span class="badge badge-sale">🏷️ در حال فروش (قیمت: '+p.salePrice+'M)</span>' : ''}
+            ${p.forSale ? `<button type="button" class="btn-red btn-xs" onclick="window._cancelSale(${p.id})">لغو فروش</button>` : ''}
+          </div>`;
+        }).join('');
+      }
+
+      // ========== REGISTER / SELL / TRADE / BUDGET ==========
+      window._registerTeam = function() {
+        if (!DB.seasonSettings.registrationOpen) { showToast('ثبت نام تیم در این فصل بسته شده است.', true); return; }
+        const available = DB.teams.filter(t => !t.manager);
+        if (available.length === 0) { showToast('هیچ تیم خالی برای ثبت نام نیست.', true); return; }
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+          <h3>📝 ثبت نام در لیگ</h3>
+          <select id="regLeague" style="margin:10px 0;"><option value="">انتخاب لیگ</option><option value="پرمیر لیگ">پرمیر لیگ</option><option value="چمپیونشیپ">چمپیونشیپ</option></select>
+          <select id="regTeam" style="margin:10px 0;"><option value="">ابتدا لیگ را انتخاب کنید</option></select>
+          <div id="regTeamError"></div>
+          <button type="button" class="btn-green" onclick="window._submitTeamReg()">📩 ارسال درخواست</button>
+          <button type="button" class="btn-dark" onclick="window._closeOverlay()" style="margin-top:8px;">بستن</button>`;
+        document.getElementById('regLeague').addEventListener('change', function() {
+          const league = this.value;
+          const sel = document.getElementById('regTeam');
+          sel.innerHTML = '<option value="">انتخاب تیم</option>';
+          const availableTeams = DB.teams.filter(t => !t.manager && t.league === league);
+          if (availableTeams.length === 0) {
+            sel.innerHTML = '<option value="">هیچ تیمی در این لیگ موجود نیست</option>';
+          } else {
+            availableTeams.forEach(t => {
+              sel.innerHTML += `<option value="${t.id}">${escapeHTML(t.name)}</option>`;
+            });
+          }
+        });
+        overlay.classList.remove('hidden');
+      };
+
+      window._submitTeamReg = function() {
+        const teamId = parseInt(document.getElementById('regTeam').value);
+        const errEl = document.getElementById('regTeamError');
+        if (!teamId) { errEl.innerHTML = '<div class="msg-error">لطفاً تیم مورد نظر را انتخاب کنید</div>'; return; }
+        const team = DB.teams.find(t => t.id === teamId);
+        if (!team || team.manager) { errEl.innerHTML = '<div class="msg-error">این تیم در دسترس نیست</div>'; return; }
+        DB.requests.push({
+          id: Date.now() + Math.random(),
+          type: 'team_registration',
+          username: currentUser.username,
+          teamId: team.id,
+          teamName: team.name,
+          league: team.league,
+          status: 'pending',
+          time: new Date().toLocaleString('fa-IR')
+        });
+        addInboxMessage('رضا برمودا', `📝 درخواست ثبت نام: ${currentUser.username} می‌خواهد مدیر تیم ${team.name} (${team.league}) شود.`);
+        saveDB();
+        window._closeOverlay();
+        renderPage('team');
+        showToast('✅ درخواست شما به مدیرکل ارسال شد.');
+      };
+
+      window._sellPlayer = function() {
+        if (!DB.seasonSettings.transfersOpen) { showToast('نقل و انتقالات بسته است.', true); return; }
+        const team = getUserTeam();
+        if (!team) return;
+        const players = getTeamPlayers(team.id).filter(p => !p.forSale);
+        if (players.length === 0) { showToast('بازیکنی برای فروش وجود ندارد.', true); return; }
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+          <h3>💰 فروش بازیکن</h3>
+          <select id="sellPlayer" style="margin:10px 0;">${players.map(p=>`<option value="${p.id}">${escapeHTML(p.name)} (${escapeHTML(p.position)})</option>`).join('')}</select>
+          <input type="number" id="sellPrice" placeholder="قیمت (میلیون یورو)" style="margin:10px 0;">
+          <div id="sellError"></div>
+          <button type="button" class="btn-orange" onclick="window._submitSell()">📩 ارسال درخواست</button>
+          <button type="button" class="btn-dark" onclick="window._closeOverlay()" style="margin-top:8px;">بستن</button>`;
+        overlay.classList.remove('hidden');
+      };
+      window._submitSell = function() {
+        const playerId = parseInt(document.getElementById('sellPlayer').value);
+        const price = parseInt(document.getElementById('sellPrice').value);
+        const errEl = document.getElementById('sellError');
+        if (!playerId || !price || price <= 0) { errEl.innerHTML = '<div class="msg-error">لطفاً بازیکن و قیمت معتبر وارد کنید</div>'; return; }
+        const team = getUserTeam();
+        if (!team) return;
+        const players = getTeamPlayers(team.id);
+        if (players.length <= MIN_PLAYERS) {
+          errEl.innerHTML = `<div class="msg-error">حداقل تعداد بازیکنان تیم باید ${MIN_PLAYERS} نفر باشد، نمی‌توانید بازیکن بفروشید.</div>`;
+          return;
+        }
+        const player = DB.players.find(p => p.id === playerId);
+        if (!player || player.teamId !== team.id) return;
+        player.forSale = true;
+        player.salePrice = price;
+        DB.requests.push({
+          id: Date.now() + Math.random(),
+          type: 'sell_player',
+          username: currentUser.username,
+          playerId: player.id,
+          playerName: player.name,
+          price,
+          teamId: player.teamId,
+          status: 'pending',
+          time: new Date().toLocaleString('fa-IR')
+        });
+        addInboxMessage('رضا برمودا', `💰 درخواست فروش: ${currentUser.username} می‌خواهد بازیکن ${player.name} را به قیمت ${price}M بفروشد.`);
+        saveDB();
+        window._closeOverlay();
+        renderPage('team');
+        showToast('✅ درخواست فروش ارسال شد.');
+      };
+      window._cancelSale = function(playerId) {
+        const player = DB.players.find(p => p.id === playerId);
+        if (player) { player.forSale = false; player.salePrice = null; }
+        saveDB();
+        renderPage('team');
+        showToast('✅ فروش لغو شد.');
+      };
+
+      window._tradePlayer = function() {
+        if (!DB.seasonSettings.transfersOpen) { showToast('نقل و انتقالات بسته است.', true); return; }
+        const team = getUserTeam();
+        if (!team) return;
+        const myPlayers = getTeamPlayers(team.id);
+        if (myPlayers.length === 0) { showToast('بازیکنی برای معاوضه ندارید.', true); return; }
+        const otherTeams = DB.teams.filter(t => t.id !== team.id && t.manager);
+        if (otherTeams.length === 0) { showToast('تیم دیگری برای معاوضه وجود ندارد.', true); return; }
+
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+          <h3>🔄 معاوضه بازیکن</h3>
+          <div style="margin:10px 0;">
+            <label style="color:#aaa;">بازیکن خودتان:</label>
+            <select id="tradeMyPlayer" style="margin:4px 0;">${myPlayers.map(p=>`<option value="${p.id}">${escapeHTML(p.name)} (${escapeHTML(p.position)})</option>`).join('')}</select>
+          </div>
+          <div style="margin:10px 0;">
+            <label style="color:#aaa;">تیم مقصد:</label>
+            <select id="tradeTargetTeam" style="margin:4px 0;">${otherTeams.map(t=>`<option value="${t.id}">${escapeHTML(t.name)}</option>`).join('')}</select>
+          </div>
+          <div style="margin:10px 0;">
+            <label style="color:#aaa;">بازیکن تیم مقصد:</label>
+            <select id="tradeTargetPlayer" style="margin:4px 0;"><option value="">انتخاب بازیکن...</option></select>
+          </div>
+          <div style="margin:10px 0;">
+            <input type="number" id="tradeCash" placeholder="مبلغ نقدی (اختیاری، میلیون یورو)" style="margin:4px 0;">
+          </div>
+          <div id="tradeError" style="margin:6px 0;"></div>
+          <button type="button" class="btn-purple" onclick="window._submitTrade()">📩 ارسال درخواست</button>
+          <button type="button" class="btn-dark" onclick="window._closeOverlay()" style="margin-top:8px;">بستن</button>`;
+
+        document.getElementById('tradeTargetTeam').addEventListener('change', function() {
+          const tid = parseInt(this.value);
+          const sel = document.getElementById('tradeTargetPlayer');
+          sel.innerHTML = '<option value="">انتخاب بازیکن...</option>';
+          if (!tid) { sel.innerHTML = '<option value="">ابتدا تیم را انتخاب کنید</option>'; return; }
+          const players = DB.players.filter(p => p.teamId === tid);
+          if (players.length === 0) {
+            sel.innerHTML = '<option value="">⚠️ این تیم بازیکنی ندارد</option>';
+          } else {
+            players.forEach(p => {
+              sel.innerHTML += `<option value="${p.id}">${escapeHTML(p.name)} (${escapeHTML(p.position)})</option>`;
+            });
+          }
+        });
+
+        overlay.classList.remove('hidden');
+      };
+
+      window._submitTrade = function() {
+        const myPlayerId = parseInt(document.getElementById('tradeMyPlayer').value);
+        const targetTeamId = parseInt(document.getElementById('tradeTargetTeam').value);
+        const targetPlayerId = parseInt(document.getElementById('tradeTargetPlayer').value);
+        const cash = parseInt(document.getElementById('tradeCash').value) || 0;
+        const errEl = document.getElementById('tradeError');
+        if (!myPlayerId || !targetTeamId || !targetPlayerId) { errEl.innerHTML = '<div class="msg-error">لطفاً تمام موارد را انتخاب کنید</div>'; return; }
+        const targetTeam = DB.teams.find(t => t.id === targetTeamId);
+        if (!targetTeam || !targetTeam.manager) return;
+        const myPlayer = DB.players.find(p => p.id === myPlayerId);
+        const targetPlayer = DB.players.find(p => p.id === targetPlayerId);
+        if (!myPlayer || !targetPlayer) return;
+        DB.requests.push({
+          id: Date.now() + Math.random(),
+          type: 'trade_offer',
+          fromUser: currentUser.username,
+          toUser: targetTeam.manager,
+          myPlayerId, targetPlayerId, cash,
+          myPlayerName: myPlayer.name,
+          targetPlayerName: targetPlayer.name,
+          fromTeamId: getUserTeam()?.id,
+          targetTeamId,
+          fromTeamName: getUserTeam()?.name,
+          status: 'pending_target',
+          time: new Date().toLocaleString('fa-IR')
+        });
+        addInboxMessage(targetTeam.manager, `🔄 پیشنهاد معاوضه از ${currentUser.username}: بازیکن ${myPlayer.name} با بازیکن ${targetPlayer.name} ${cash>0?'+ '+cash+'M نقدی':''}. لطفاً در بخش نقل و انتقالات پاسخ دهید.`);
+        saveDB();
+        window._closeOverlay();
+        renderPage('team');
+        showToast('✅ پیشنهاد معاوضه ارسال شد.');
+      };
+
+      window._buyBudget = function() {
+        const team = getUserTeam();
+        if (!team && !isAdmin()) { showToast('شما تیم ندارید!', true); return; }
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+          <h3>💳 خرید بودجه</h3>
+          <div style="text-align:center;padding:20px;">
+            <p style="font-size:1.2rem;margin-bottom:20px;color:#f0c060;">برای خرید بودجه، لطفاً به پیوی من در سروش پلاس مراجعه کنید:</p>
+            <a href="https://splus.ir/Reza_Bermuda" target="_blank" style="color:#fff;font-size:1.4rem;text-decoration:none;background:rgba(255,255,255,0.1);padding:14px 28px;border-radius:16px;display:inline-block;transition:0.2s;">
+              @Reza_Bermuda
+            </a>
+          </div>
+          <button type="button" class="btn-dark" onclick="window._closeOverlay()" style="margin-top:20px;width:100%;">بستن</button>
+        `;
+        overlay.classList.remove('hidden');
+      };
+
+      // ========== TRANSFER PAGE ==========
+      function renderTransferPage() {
+        const container = document.getElementById('mainContent');
+        if (!hasTeam() && !isAdmin()) {
+          container.innerHTML = '<div class="card glass"><h2>🔄 نقل و انتقالات</h2><p class="text-muted">ابتدا باید تیم داشته باشید</p></div>';
+          return;
+        }
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>🔄 نقل و انتقالات</h2>
+            <div class="flex-wrap">
+              ${DB.seasonSettings.transfersOpen ? `<button type="button" class="btn-orange" onclick="window._sendAgentLetter()">📨 ارسال نامه به نماینده</button>` : `<span class="text-muted" style="color:#e05555;">⛔ نقل و انتقالات بسته است</span>`}
+              <button type="button" class="btn-blue" onclick="window._openMarket()">🏪 انتقالات لیگ</button>
+              <button type="button" class="btn-dark" onclick="window._showHistory()">📋 تاریخچه</button>
+            </div>
+            <div id="transferSubContent" style="margin-top:18px;"></div>
+          </div>
+          <div id="tradeRequestsContainer" class="card glass2"></div>
+        `;
+        document.getElementById('transferSubContent').innerHTML = '<p class="text-muted">یکی از گزینه‌های بالا را انتخاب کنید</p>';
+        if (hasTeam()) {
+          renderTeamNegotiationBox();
+          renderTradeRequests();
+        }
+      }
+
+      function renderTradeRequests() {
+        const container = document.getElementById('tradeRequestsContainer');
+        if (!container) return;
+        const team = getUserTeam();
+        if (!team) return;
+        const pendingTrades = DB.requests.filter(r => r.type === 'trade_offer' && r.toUser === currentUser.username && r.status === 'pending_target');
+        if (pendingTrades.length === 0) {
+          container.innerHTML = `<p class="text-muted">هیچ درخواست معاوضه‌ای برای شما وجود ندارد</p>`;
+          return;
+        }
+        let html = `<h3>📨 درخواست‌های معاوضه برای شما</h3>`;
+        pendingTrades.forEach(r => {
+          html += `
+            <div class="glass2" style="padding:14px;margin:8px 0;border-radius:16px;border-right:3px solid #ff9800;">
+              <div><strong>از تیم:</strong> ${escapeHTML(r.fromTeamName || r.fromUser || 'نامشخص')}</div>
+              <div><strong>بازیکن شما:</strong> ${escapeHTML(r.targetPlayerName || 'نامشخص')}</div>
+              <div><strong>در ازای:</strong> ${escapeHTML(r.myPlayerName || 'نامشخص')}</div>
+              ${r.cash > 0 ? `<div><strong>💰 نقدی:</strong> ${r.cash}M</div>` : ''}
+              <div class="text-muted" style="font-size:0.8rem;">🕐 ${r.time}</div>
+              <div style="margin-top:10px;display:flex;gap:8px;">
+                <button type="button" class="btn-green btn-sm" onclick="window._respondTrade(${r.id}, true)">✅ قبول</button>
+                <button type="button" class="btn-red btn-sm" onclick="window._respondTrade(${r.id}, false)">❌ رد</button>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      }
+
+      window._respondTrade = function(requestId, accept) {
+        const req = DB.requests.find(r => r.id === requestId);
+        if (!req) { showToast('درخواست پیدا نشد!', true); return; }
+        if (req.status !== 'pending_target') { showToast('این درخواست قبلاً پاسخ داده شده!', true); return; }
+        if (accept) {
+          req.status = 'pending_admin';
+          addInboxMessage('رضا برمودا', `🔄 درخواست معاوضه: ${req.fromUser} و ${req.toUser} به توافق رسیدند. لطفاً تایید نهایی را انجام دهید.`);
+          addInboxMessage(req.fromUser, `✅ تیم ${req.toUser} با معاوضه موافقت کرد. در انتظار تایید مدیرکل...`);
+          showToast('✅ شما با معاوضه موافقت کردید. درخواست به مدیرکل ارسال شد.');
+        } else {
+          req.status = 'rejected';
+          addInboxMessage(req.fromUser, `❌ تیم ${req.toUser} درخواست معاوضه را رد کرد.`);
+          showToast('❌ درخواست معاوضه رد شد.');
+        }
+        saveDB();
+        renderPage('transfer');
+      };
+
+      function renderTeamNegotiationBox() {
+        const sub = document.getElementById('transferSubContent');
+        if (!sub) return;
+        const activeNeg = DB.negotiations.find(n => n.teamUsername === currentUser?.username && n.status === 'active');
+        if (activeNeg) {
+          sub.innerHTML += `
+            <div class="glass2" style="padding:16px;margin-top:12px;border-radius:16px;border-right:4px solid #f0c060;">
+              <h4>💬 مذاکره فعال با نماینده ${escapeHTML(activeNeg.agentUsername)}</h4>
+              <p>بازیکن: <strong>${escapeHTML(activeNeg.playerName)}</strong> (${escapeHTML(activeNeg.nationality)})</p>
+              <div style="display:flex;gap:10px;">
+                <button type="button" class="btn-blue btn-sm" onclick="window._openTeamNegChat('${activeNeg.id}')">🗨️ ورود به مذاکره</button>
+                <button type="button" class="btn-red btn-sm" onclick="window._cancelNegotiation('${activeNeg.id}')">🚫 لغو مذاکره</button>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // ========== NEGOTIATION CHAT ==========
+      window._openTeamNegChat = function(negId) {
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg) return;
+        const team = getUserTeam();
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+          <h3>💬 مذاکره: ${escapeHTML(neg.playerName)} (${escapeHTML(neg.nationality)}) | 💰 بودجه تیم: <span style="color:#f0c060;">${team?.budget || '?'}M</span></h3>
+          <div class="chat-box glass2" id="teamNegChatBox" style="min-height:180px;max-height:300px;">
+            ${neg.messages.map((m, i) => `
+              <div class="news-item">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <strong>${escapeHTML(m.sender)}:</strong>
+                  <button class="dots-btn" onclick="window._deleteChatMsg('${neg.id}', ${i}, 'teamNegChatBox')">⋯</button>
+                </div>
+                <div>${escapeHTML(m.text)}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+            <input type="text" id="teamNegChatInput" placeholder="پیام چت..." style="flex:2;min-width:160px;">
+            <button type="button" class="btn-blue btn-sm" onclick="window._sendTeamNegChat('${neg.id}')">📨 ارسال</button>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
+            <input type="number" id="teamNegPrice" placeholder="قیمت (M)" style="flex:1;">
+            <input type="number" id="teamNegDuration" placeholder="مدت (فصل)" style="flex:1;">
+            <button type="button" class="btn-purple btn-sm" onclick="window._sendTeamNegProposal('${neg.id}')">📩 ارسال پیشنهاد</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button type="button" class="btn-green" onclick="window._approveTeamNeg('${neg.id}')">✅ موافقت نهایی</button>
+            <button type="button" class="btn-red" onclick="window._cancelNegotiation('${neg.id}')">🚫 لغو مذاکره</button>
+            <button type="button" class="btn-dark" onclick="window._closeOverlay()">بستن</button>
+          </div>
+          <div id="teamNegError"></div>`;
+        overlay.classList.remove('hidden');
+        const chatBox = document.getElementById('teamNegChatBox');
+        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+      };
+
+      window._deleteChatMsg = function(negId, msgIndex, chatBoxId) {
+        if (!confirm('آیا از حذف این پیام مطمئن هستید؟')) return;
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg || !neg.messages[msgIndex]) return;
+        neg.messages.splice(msgIndex, 1);
+        saveDB();
+        const chatBox = document.getElementById(chatBoxId);
+        if (chatBox) {
+          chatBox.innerHTML = neg.messages.map((m, i) => `
+            <div class="news-item">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong>${escapeHTML(m.sender)}:</strong>
+                <button class="dots-btn" onclick="window._deleteChatMsg('${neg.id}', ${i}, '${chatBoxId}')">⋯</button>
+              </div>
+              <div>${escapeHTML(m.text)}</div>
+            </div>
+          `).join('');
+        }
+        showToast('✅ پیام حذف شد.');
+      };
+
+      window._sendTeamNegChat = function(negId) {
+        const input = document.getElementById('teamNegChatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg) return;
+        pushNegMessage(neg, currentUser.username, text);
+        saveDB();
+        const chatBox = document.getElementById('teamNegChatBox');
+        if (chatBox) {
+          const msgIndex = neg.messages.length - 1;
+          const msgDiv = document.createElement('div');
+          msgDiv.className = 'news-item';
+          msgDiv.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong>${escapeHTML(currentUser.username)}:</strong>
+              <button class="dots-btn" onclick="window._deleteChatMsg('${neg.id}', ${msgIndex}, 'teamNegChatBox')">⋯</button>
+            </div>
+            <div>${escapeHTML(text)}</div>`;
+          chatBox.appendChild(msgDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        input.value = '';
+      };
+
+      window._sendTeamNegProposal = function(negId) {
+        const price = parseInt(document.getElementById('teamNegPrice').value);
+        const duration = parseInt(document.getElementById('teamNegDuration').value);
+        const errEl = document.getElementById('teamNegError');
+        if (!price || !duration || price <= 0 || duration <= 0) {
+          errEl.innerHTML = '<div class="msg-error">قیمت و مدت معتبر وارد کنید</div>';
+          return;
+        }
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg) return;
+        neg.price = price;
+        neg.duration = duration;
+        pushNegMessage(neg, currentUser.username, `💎 پیشنهاد: ${price}M به مدت ${duration} فصل`);
+        saveDB();
+        const chatBox = document.getElementById('teamNegChatBox');
+        if (chatBox) {
+          const msgIndex = neg.messages.length - 1;
+          const msgDiv = document.createElement('div');
+          msgDiv.className = 'news-item';
+          msgDiv.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong>${escapeHTML(currentUser.username)}:</strong>
+              <button class="dots-btn" onclick="window._deleteChatMsg('${neg.id}', ${msgIndex}, 'teamNegChatBox')">⋯</button>
+            </div>
+            <div>💎 پیشنهاد: ${price}M به مدت ${duration} فصل</div>`;
+          chatBox.appendChild(msgDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        showToast('✅ پیشنهاد ارسال شد.');
+      };
+
+      window._approveTeamNeg = function(negId) {
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg) return;
+        if (neg.status === 'final') { showToast('این قرارداد قبلاً نهایی شده است.', true); return; }
+        if (currentUser.username === neg.teamUsername) neg.teamApproved = true;
+        if (neg.agentApproved && neg.teamApproved) {
+          neg.status = 'final';
+          DB.requests.push({
+            id: Date.now() + Math.random(),
+            type: 'final_contract',
+            negId: neg.id,
+            playerName: neg.playerName,
+            nationality: neg.nationality,
+            position: neg.position,
+            teamUsername: neg.teamUsername,
+            agentUsername: neg.agentUsername,
+            price: neg.price,
+            duration: neg.duration,
+            status: 'pending',
+            time: new Date().toLocaleString('fa-IR')
+          });
+          addInboxMessage('رضا برمودا', `📝 قرارداد نهایی: ${neg.playerName} بین ${neg.teamUsername} و نماینده ${neg.agentUsername} آماده تایید نهایی است. (${neg.price}M - ${neg.duration} فصل)`);
+          showToast('✅ هر دو طرف موافقت کردند! قرارداد به مدیرکل ارسال شد.');
+        } else {
+          showToast('✅ موافقت شما ثبت شد. منتظر موافقت نماینده باشید.');
+        }
+        saveDB();
+        window._closeOverlay();
+        renderPage('transfer');
+      };
+
+      window._cancelNegotiation = function(negId) {
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg) return;
+        if (!confirm('آیا از لغو کامل این مذاکره اطمینان دارید؟')) return;
+        addInboxMessage(neg.teamUsername, `🚫 مذاکره برای بازیکن ${neg.playerName} توسط ${currentUser.username} لغو شد.`);
+        addInboxMessage(neg.agentUsername, `🚫 مذاکره برای بازیکن ${neg.playerName} توسط ${currentUser.username} لغو شد.`);
+        DB.negotiations = DB.negotiations.filter(n => n.id != negId);
+        const originalReq = DB.requests.find(r => r.type === 'agent_request' && r.fromUser === neg.teamUsername && r.status === 'accepted');
+        if (originalReq) originalReq.status = 'cancelled';
+        saveDB();
+        window._closeOverlay();
+        if (currentPage === 'transfer') renderPage('transfer');
+        else renderPage('agent');
+        showToast('🚫 مذاکره لغو شد.');
+      };
+
+      window._sendAgentLetter = function() {
+        if (!DB.seasonSettings.transfersOpen) { showToast('نقل و انتقالات بسته است.', true); return; }
+        const agents = DB.users.filter(u => u.role === 'agent');
+        if (agents.length === 0) { showToast('هیچ نماینده‌ای وجود ندارد.', true); return; }
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+          <h3>📨 ارسال درخواست مذاکره</h3>
+          <p style="color:#aaa;font-size:0.9rem;">لطفاً اطلاعات بازیکن مورد نظر خود را وارد کنید. درخواست شما برای نمایندگان ارسال خواهد شد.</p>
+          <input type="text" id="letterPlayerName" placeholder="نام بازیکن" style="margin:10px 0;">
+          <input type="text" id="letterPlayerPos" placeholder="پست بازیکن" style="margin:10px 0;">
+          <input type="text" id="letterPlayerNat" placeholder="ملیت" style="margin:10px 0;">
+          <textarea id="letterText" placeholder="متن نامه..." style="margin:10px 0;min-height:80px;"></textarea>
+          <div id="letterError"></div>
+          <button type="button" class="btn-orange" onclick="window._submitLetter()">📩 ارسال</button>
+          <button type="button" class="btn-dark" onclick="window._closeOverlay()" style="margin-top:8px;">بستن</button>`;
+        overlay.classList.remove('hidden');
+      };
+      window._submitLetter = function() {
+        const playerName = document.getElementById('letterPlayerName').value.trim();
+        const position = document.getElementById('letterPlayerPos').value.trim();
+        const nationality = document.getElementById('letterPlayerNat').value.trim();
+        const text = document.getElementById('letterText').value.trim();
+        const errEl = document.getElementById('letterError');
+        if (!playerName || !position || !nationality) { errEl.innerHTML = '<div class="msg-error">لطفاً اطلاعات بازیکن را کامل وارد کنید</div>'; return; }
+        DB.requests.push({
+          id: Date.now() + Math.random(),
+          type: 'agent_request',
+          fromUser: currentUser.username,
+          playerName, position, nationality, text,
+          status: 'pending',
+          time: new Date().toLocaleString('fa-IR')
+        });
+        const agents = DB.users.filter(u => u.role === 'agent');
+        agents.forEach(agent => {
+          addInboxMessage(agent.username, `📨 درخواست مذاکره جدید از ${currentUser.username} برای بازیکن ${playerName}`);
+        });
+        saveDB();
+        window._closeOverlay();
+        showToast('✅ درخواست شما در صف قرار گرفت.');
+      };
+
+      window._openMarket = function() {
+        const sub = document.getElementById('transferSubContent');
+        const forSalePlayers = DB.players.filter(p => p.forSale && DB.requests.some(r => r.type === 'sell_player' && r.playerId === p.id && r.status === 'approved'));
+        if (forSalePlayers.length === 0) {
+          sub.innerHTML = '<p class="text-muted">هیچ بازیکنی در انتقالات لیگ موجود نیست</p>';
+          return;
+        }
+        const myTeam = getUserTeam();
+        sub.innerHTML = `<h3>🏪 انتقالات لیگ</h3>` + forSalePlayers.map(p => {
+          const team = DB.teams.find(t => t.id === p.teamId);
+          const isOwner = myTeam && myTeam.id === p.teamId;
+          return `<div class="glass2" style="padding:14px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;border-radius:16px;">
+            <span><strong>${escapeHTML(p.name)}</strong> (${escapeHTML(p.position)}) - قیمت: ${p.salePrice}M - تیم: ${team?.name||'نامشخص'}</span>
+            ${!isOwner ? (DB.seasonSettings.transfersOpen ? `<button type="button" class="btn-blue btn-sm" onclick="window._buyFromMarket(${p.id})">خرید</button>` : `<span class="text-muted" style="color:#e05555;">⛔ بسته</span>`) : '<span class="text-muted">بازیکن خودتان</span>'}
+          </div>`;
+        }).join('');
+      };
+      window._buyFromMarket = function(playerId) {
+        if (!DB.seasonSettings.transfersOpen) { showToast('نقل و انتقالات بسته است.', true); return; }
+        const player = DB.players.find(p => p.id === playerId);
+        if (!player) return;
+        const team = getUserTeam();
+        if (!team) { showToast('شما تیم ندارید!', true); return; }
+        if (team.budget < player.salePrice) { showToast('بودجه کافی نیست!', true); return; }
+        const isForeign = isForeignPlayer(player.nationality);
+        if (isForeign && team.foreignQuota <= 0) { showToast('سهمیه خارجی تیم پر است!', true); return; }
+        if (!isForeign && team.localQuota <= 0) { showToast('سهمیه داخلی تیم پر است!', true); return; }
+        const currentPlayers = getTeamPlayers(team.id);
+        if (currentPlayers.length >= MAX_PLAYERS) { showToast(`حداکثر تعداد بازیکنان ${MAX_PLAYERS} است، نمی‌توانید بازیکن جدید بخرید.`, true); return; }
+        DB.requests.push({
+          id: Date.now() + Math.random(),
+          type: 'market_buy',
+          username: currentUser.username,
+          playerId,
+          playerName: player.name,
+          price: player.salePrice,
+          teamId: team.id,
+          status: 'pending',
+          time: new Date().toLocaleString('fa-IR')
+        });
+        addInboxMessage('رضا برمودا', `🏪 درخواست خرید از انتقالات لیگ: ${currentUser.username} می‌خواهد ${player.name} را به قیمت ${player.salePrice}M بخرد.`);
+        saveDB();
+        showToast('✅ درخواست خرید به مدیرکل ارسال شد.');
+      };
+
+      window._showHistory = function() {
+        const sub = document.getElementById('transferSubContent');
+        const filtered = DB.transferHistory.filter(h => h.type === 'buy' || h.type === 'trade' || h.type === 'negotiation');
+        if (filtered.length === 0) {
+          sub.innerHTML = '<p class="text-muted">تاریخچه‌ای وجود ندارد</p>';
+          return;
+        }
+        let html = `<h3>📋 تاریخچه نقل و انتقالات</h3>`;
+        filtered.slice(-30).reverse().forEach(h => {
+          let content = '';
+          if (h.type === 'buy') {
+            content = `🏪 انتقالات لیگ<br>${escapeHTML(h.data.player)} ☜ ${escapeHTML(h.data.buyer)}<br>از تیم: ${escapeHTML(h.data.seller)} — ${h.data.price}M`;
+          } else if (h.type === 'trade') {
+            content = `🔄 معاوضه<br>${escapeHTML(h.data.player1)} ☜ ${escapeHTML(h.data.to)}<br>${escapeHTML(h.data.player2)} ☜ ${escapeHTML(h.data.from)}<br>💰 نقدی: ${h.data.cash}M`;
+          } else if (h.type === 'negotiation') {
+            content = `📝 قرارداد جدید<br>${escapeHTML(h.data.player)} طی قراردادی به مبلغ ${h.data.price}M به مدت ${h.data.duration} فصل به ${escapeHTML(h.data.team)} پیوست.`;
+          }
+          html += `
+            <div class="history-item">
+              <div class="text">${content}</div>
+              <div class="time">🕐 ${h.time}</div>
+            </div>
+          `;
+        });
+        sub.innerHTML = html;
+      };
+
+      // ========== NEWS PAGE ==========
+      function renderNewsPage() {
+        const container = document.getElementById('mainContent');
+        const canPost = isAdmin() || isObserver() || isNewsAdmin();
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>📰 اخبار لیگ</h2>
+            <div class="chat-box glass2" id="newsBox" style="min-height:240px;"></div>
+            ${canPost ? `
+            <div style="display:flex;gap:10px;margin-top:10px;">
+              <input type="text" id="newsInput" placeholder="خبر جدید...">
+              <button type="button" class="btn-blue" onclick="window._sendNews()">📨 ارسال</button>
+            </div>` : ''}
+          </div>`;
+        renderNewsPosts();
+      }
+
+      function renderNewsPosts() {
+        const box = document.getElementById('newsBox');
+        if (!box) return;
+        const canDelete = isAdmin() || isObserver() || isNewsAdmin();
+        box.innerHTML = DB.newsPosts.slice(-50).reverse().map(p => `
+          <div class="news-item">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><span class="sender">${p.auto ? '🤖 سیستم' : escapeHTML(p.sender)}</span><span class="time">${p.time}</span></div>
+              ${canDelete ? `<button class="dots-btn" onclick="window._deleteNews('${p.id}')">⋯</button>` : ''}
+            </div>
+            <div style="margin-top:4px;">${escapeHTML(p.text)}</div>
+          </div>
+        `).join('');
+      }
+
+      window._sendNews = function() {
+        if (!isAdmin() && !isObserver() && !isNewsAdmin()) { showToast('شما اجازه ارسال خبر ندارید.', true); return; }
+        const input = document.getElementById('newsInput');
+        const text = input.value.trim();
+        if (!text) return;
+        addNews(currentUser.username, text, false);
+        input.value = '';
+        renderNewsPosts();
+      };
+
+      window._deleteNews = function(id) {
+        if (!isAdmin() && !isObserver() && !isNewsAdmin()) { showToast('شما اجازه حذف خبر ندارید.', true); return; }
+        DB.newsPosts = DB.newsPosts.filter(p => p.id != id);
+        saveDB();
+        renderNewsPosts();
+        if (currentPage === 'news') renderNewsPage();
+        else if (currentAdminSub === 'newsMgmt') renderAdminSubPage('newsMgmt');
+      };
+
+      // ========== INBOX ==========
+      function renderInboxPage() {
+        const container = document.getElementById('mainContent');
+        const messages = DB.inboxMessages.filter(m => m.to === currentUser.username).reverse();
+        messages.forEach(m => { if (!m.read) { m.read = true; } });
+        saveDB();
+        updateInboxBadge();
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>📬 صندوق پیام</h2>
+            ${messages.length===0 ? '<p class="text-muted">پیامی وجود ندارد</p>' : ''}
+            ${messages.map(m => `
+              <div class="glass2" style="padding:14px 18px;margin:8px 0;font-size:0.95rem;border-right:4px solid ${m.type === 'error' ? '#e05555' : '#f0c060'};border-radius:16px;">
+                ${escapeHTML(m.text)}
+                <br><small style="color:#888;">${m.time}</small>
+              </div>
+            `).join('')}
+            ${messages.length > 0 ? `<button type="button" class="btn-dark btn-sm" onclick="window._clearInbox()" style="margin-top:12px;">🗑️ پاک کردن همه</button>` : ''}
+          </div>`;
+      }
+      window._clearInbox = function() {
+        DB.inboxMessages = DB.inboxMessages.filter(m => m.to !== currentUser.username);
+        saveDB();
+        renderInboxPage();
+      };
+
+      // ========== AGENT PANEL ==========
+      function renderAgentPanel() {
+        const container = document.getElementById('mainContent');
+        const pendingRequests = DB.requests.filter(r => r.type === 'agent_request' && r.status === 'pending');
+        const activeNegs = DB.negotiations.filter(n => n.agentUsername === currentUser.username && n.status === 'active');
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>🎙️ پنل نماینده</h2>
+            <h3>📨 درخواست‌های جدید (${pendingRequests.length})</h3>
+            ${pendingRequests.map(req => `
+              <div class="glass2" style="padding:14px;margin:8px 0;border-radius:16px;">
+                <div><strong>از:</strong> ${escapeHTML(req.fromUser)} | <strong>بازیکن:</strong> ${escapeHTML(req.playerName)} (${escapeHTML(req.position)}, ${escapeHTML(req.nationality)})</div>
+                <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+                  <button type="button" class="btn-green btn-sm" onclick="window._acceptAgentRequest(${req.id})">✅ قبول و شروع مذاکره</button>
+                </div>
+              </div>
+            `).join('') || '<p class="text-muted">درخواستی نیست</p>'}
+            <h3 style="margin-top:18px;">💬 مذاکرات فعال من (${activeNegs.length})</h3>
+            ${activeNegs.map(n => `
+              <div class="glass2" style="padding:14px;margin:8px 0;border-radius:16px;">
+                <div>مذاکره با <strong>${escapeHTML(n.teamUsername)}</strong> برای بازیکن <strong>${escapeHTML(n.playerName)}</strong></div>
+                <div style="display:flex;gap:8px;margin-top:8px;">
+                  <button type="button" class="btn-blue btn-sm" onclick="window._openAgentNegChat(${n.id})">🗨️ ورود به مذاکره</button>
+                  <button type="button" class="btn-red btn-sm" onclick="window._cancelNegotiation(${n.id})">🚫 لغو مذاکره</button>
+                </div>
+              </div>
+            `).join('') || '<p class="text-muted">مذاکره فعالی نیست</p>'}
+          </div>`;
+      }
+
+      window._acceptAgentRequest = function(reqId) {
+        const active = DB.negotiations.find(n => n.agentUsername === currentUser.username && n.status === 'active');
+        if (active) { showToast('شما یک مذاکره فعال دارید. ابتدا آن را تمام یا لغو کنید.', true); return; }
+        const req = DB.requests.find(r => r.id === reqId);
+        if (!req || req.status !== 'pending') { showToast('درخواست دیگر معتبر نیست.', true); return; }
+        req.status = 'accepted';
+        const neg = {
+          id: Date.now() + Math.random(),
+          agentUsername: currentUser.username,
+          teamUsername: req.fromUser,
+          playerName: req.playerName,
+          position: req.position,
+          nationality: req.nationality,
+          status: 'active',
+          messages: [],
+          agentApproved: false,
+          teamApproved: false,
+          price: 0,
+          duration: 0
+        };
+        DB.negotiations.push(neg);
+        addInboxMessage(req.fromUser, `✅ نماینده ${currentUser.username} درخواست شما را قبول کرد. مذاکره شروع شد. لطفاً به بخش نقل و انتقالات بروید.`);
+        saveDB();
+        renderPage('agent');
+        showToast('✅ مذاکره شروع شد.');
+      };
+
+      window._openAgentNegChat = function(negId) {
+        const neg = DB.negotiations.find(n => n.id === negId);
+        if (!neg) return;
+        const team = DB.teams.find(t => t.manager === neg.teamUsername);
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+          <h3>💬 مذاکره: ${escapeHTML(neg.playerName)} (${escapeHTML(neg.nationality)}) | 💰 بودجه تیم: <span style="color:#f0c060;">${team?.budget || '?'}M</span></h3>
+          <div class="chat-box glass2" id="agentNegChatBox" style="min-height:180px;max-height:300px;">
+            ${neg.messages.map((m, i) => `
+              <div class="news-item">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <strong>${escapeHTML(m.sender)}:</strong>
+                  <button class="dots-btn" onclick="window._deleteChatMsg('${neg.id}', ${i}, 'agentNegChatBox')">⋯</button>
+                </div>
+                <div>${escapeHTML(m.text)}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+            <input type="text" id="agentNegChatInput" placeholder="پیام چت..." style="flex:2;min-width:160px;">
+            <button type="button" class="btn-blue btn-sm" onclick="window._sendAgentNegChat('${neg.id}')">📨 ارسال</button>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
+            <input type="number" id="agentNegPrice" placeholder="قیمت (M)" style="flex:1;">
+            <input type="number" id="agentNegDuration" placeholder="مدت (فصل)" style="flex:1;">
+            <button type="button" class="btn-purple btn-sm" onclick="window._sendAgentNegProposal('${neg.id}')">📩 ارسال پیشنهاد</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button type="button" class="btn-green" onclick="window._approveAgentNeg('${neg.id}')">✅ موافقت نهایی</button>
+            <button type="button" class="btn-red" onclick="window._cancelNegotiation('${neg.id}')">🚫 لغو مذاکره</button>
+            <button type="button" class="btn-dark" onclick="window._closeOverlay()">بستن</button>
+          </div>
+          <div id="agentNegError"></div>`;
+        overlay.classList.remove('hidden');
+        const chatBox = document.getElementById('agentNegChatBox');
+        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+      };
+
+      window._sendAgentNegChat = function(negId) {
+        const input = document.getElementById('agentNegChatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg) return;
+        pushNegMessage(neg, currentUser.username, text);
+        saveDB();
+        const chatBox = document.getElementById('agentNegChatBox');
+        if (chatBox) {
+          const msgIndex = neg.messages.length - 1;
+          const msgDiv = document.createElement('div');
+          msgDiv.className = 'news-item';
+          msgDiv.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong>${escapeHTML(currentUser.username)}:</strong>
+              <button class="dots-btn" onclick="window._deleteChatMsg('${neg.id}', ${msgIndex}, 'agentNegChatBox')">⋯</button>
+            </div>
+            <div>${escapeHTML(text)}</div>`;
+          chatBox.appendChild(msgDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        input.value = '';
+      };
+
+      window._sendAgentNegProposal = function(negId) {
+        const price = parseInt(document.getElementById('agentNegPrice').value);
+        const duration = parseInt(document.getElementById('agentNegDuration').value);
+        const errEl = document.getElementById('agentNegError');
+        if (!price || !duration || price <= 0 || duration <= 0) {
+          errEl.innerHTML = '<div class="msg-error">قیمت و مدت معتبر وارد کنید</div>';
+          return;
+        }
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg) return;
+        neg.price = price;
+        neg.duration = duration;
+        pushNegMessage(neg, currentUser.username, `💎 پیشنهاد: ${price}M به مدت ${duration} فصل`);
+        saveDB();
+        const chatBox = document.getElementById('agentNegChatBox');
+        if (chatBox) {
+          const msgIndex = neg.messages.length - 1;
+          const msgDiv = document.createElement('div');
+          msgDiv.className = 'news-item';
+          msgDiv.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong>${escapeHTML(currentUser.username)}:</strong>
+              <button class="dots-btn" onclick="window._deleteChatMsg('${neg.id}', ${msgIndex}, 'agentNegChatBox')">⋯</button>
+            </div>
+            <div>💎 پیشنهاد: ${price}M به مدت ${duration} فصل</div>`;
+          chatBox.appendChild(msgDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        showToast('✅ پیشنهاد ارسال شد.');
+      };
+
+      window._approveAgentNeg = function(negId) {
+        const neg = DB.negotiations.find(n => n.id == negId);
+        if (!neg) return;
+        if (neg.status === 'final') { showToast('این قرارداد قبلاً نهایی شده است.', true); return; }
+        if (currentUser.username === neg.agentUsername) neg.agentApproved = true;
+        if (neg.agentApproved && neg.teamApproved) {
+          neg.status = 'final';
+          DB.requests.push({
+            id: Date.now() + Math.random(),
+            type: 'final_contract',
+            negId: neg.id,
+            playerName: neg.playerName,
+            nationality: neg.nationality,
+            position: neg.position,
+            teamUsername: neg.teamUsername,
+            agentUsername: neg.agentUsername,
+            price: neg.price,
+            duration: neg.duration,
+            status: 'pending',
+            time: new Date().toLocaleString('fa-IR')
+          });
+          addInboxMessage('رضا برمودا', `📝 قرارداد نهایی: ${neg.playerName} بین ${neg.teamUsername} و نماینده ${neg.agentUsername} آماده تایید نهایی است. (${neg.price}M - ${neg.duration} فصل)`);
+          showToast('✅ هر دو طرف موافقت کردند! قرارداد به مدیرکل ارسال شد.');
+        } else {
+          showToast('✅ موافقت شما ثبت شد. منتظر موافقت تیم باشید.');
+        }
+        saveDB();
+        window._closeOverlay();
+        renderPage('agent');
+      };
+
+      // ========== ADMIN PANEL ==========
+      function renderAdminPanel() {
+        const container = document.getElementById('mainContent');
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>🔐 پنل مدیریت</h2>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('users')">👥 کاربران</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('teams')">🏆 تیم‌ها</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('budgetAll')">💰 بودجه کل</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('quotaAll')">📊 سهمیه کل</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('budget')">💰 بودجه</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('quota')">📊 سهمیه</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('requests')">📋 درخواست‌ها</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('newsMgmt')">📰 مدیریت اخبار</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('adminsMgmt')">👤 ادمین‌ها</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('broadcast')">📢 پیام همگانی</button>
+            </div>
+            <div id="adminSubContent" style="margin-top:18px;"></div>
+          </div>`;
+        document.getElementById('adminSubContent').innerHTML = '<p class="text-muted">یکی از گزینه‌های بالا را انتخاب کنید</p>';
+      }
+
+      function renderAdminSubPage(sub) {
+        currentAdminSub = sub;
+        const el = document.getElementById('adminSubContent');
+        if (!el) return;
+
+        switch (sub) {
+          case 'budgetAll': {
+            el.innerHTML = `
+              <h3>💰 مدیریت بودجه به تمام تیم‌ها</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;">
+                <button type="button" class="btn-sm btn-blue" onclick="window._budgetAllTeams('پرمیر لیگ', 50)">➕ ۵۰M به پرمیر لیگ</button>
+                <button type="button" class="btn-sm btn-blue" onclick="window._budgetAllTeams('پرمیر لیگ', -50)">➖ ۵۰M از پرمیر لیگ</button>
+                <button type="button" class="btn-sm btn-green" onclick="window._budgetAllTeams('چمپیونشیپ', 30)">➕ ۳۰M به چمپیونشیپ</button>
+                <button type="button" class="btn-sm btn-red" onclick="window._budgetAllTeams('چمپیونشیپ', -30)">➖ ۳۰M از چمپیونشیپ</button>
+              </div>
+              <div style="margin-top:10px;">
+                <label>مبلغ دلخواه:</label>
+                <input type="number" id="budgetAllAmount" placeholder="مبلغ (مثبت=اضافه، منفی=کسر)" style="margin:4px 0;">
+                <select id="budgetAllLeague" style="margin:4px 0;">
+                  <option value="پرمیر لیگ">پرمیر لیگ</option>
+                  <option value="چمپیونشیپ">چمپیونشیپ</option>
+                </select>
+                <button type="button" class="btn-green btn-sm" onclick="window._budgetAllTeamsCustom()">اعمال</button>
+              </div>
+            `;
+            break;
+          }
+          case 'quotaAll': {
+            el.innerHTML = `
+              <h3>📊 مدیریت سهمیه به تمام تیم‌ها</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;">
+                <button type="button" class="btn-sm btn-blue" onclick="window._quotaAllTeams('پرمیر لیگ', 'foreign', 1)">➕ ۱ خارجی به پرمیر</button>
+                <button type="button" class="btn-sm btn-red" onclick="window._quotaAllTeams('پرمیر لیگ', 'foreign', -1)">➖ ۱ خارجی از پرمیر</button>
+                <button type="button" class="btn-sm btn-green" onclick="window._quotaAllTeams('چمپیونشیپ', 'foreign', 1)">➕ ۱ خارجی به چمپیونشیپ</button>
+                <button type="button" class="btn-sm btn-red" onclick="window._quotaAllTeams('چمپیونشیپ', 'foreign', -1)">➖ ۱ خارجی از چمپیونشیپ</button>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;">
+                <button type="button" class="btn-sm btn-blue" onclick="window._quotaAllTeams('پرمیر لیگ', 'local', 1)">➕ ۱ داخلی به پرمیر</button>
+                <button type="button" class="btn-sm btn-red" onclick="window._quotaAllTeams('پرمیر لیگ', 'local', -1)">➖ ۱ داخلی از پرمیر</button>
+                <button type="button" class="btn-sm btn-green" onclick="window._quotaAllTeams('چمپیونشیپ', 'local', 1)">➕ ۱ داخلی به چمپیونشیپ</button>
+                <button type="button" class="btn-sm btn-red" onclick="window._quotaAllTeams('چمپیونشیپ', 'local', -1)">➖ ۱ داخلی از چمپیونشیپ</button>
+              </div>
+              <div style="margin-top:10px;">
+                <label>مقدار دلخواه:</label>
+                <input type="number" id="quotaAllAmount" placeholder="تعداد (مثبت=اضافه، منفی=کسر)" style="margin:4px 0;">
+                <select id="quotaAllLeague" style="margin:4px 0;"><option value="پرمیر لیگ">پرمیر لیگ</option><option value="چمپیونشیپ">چمپیونشیپ</option></select>
+                <select id="quotaAllType" style="margin:4px 0;"><option value="foreign">🌍 خارجی</option><option value="local">🇧🇲 داخلی</option></select>
+                <button type="button" class="btn-green btn-sm" onclick="window._quotaAllTeamsCustom()">اعمال</button>
+              </div>
+            `;
+            break;
+          }
+          case 'users': {
+            el.innerHTML = `<h3>👥 کاربران</h3>` + DB.users.map(u => `
+              <div class="glass2" style="padding:12px 16px;margin:6px 0;display:flex;flex-direction:column;border-radius:14px;">
+                <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;">
+                  <span><strong>${escapeHTML(u.username)}</strong> | نقش: ${escapeHTML(u.role)} | ${u.banned ? '⛔ بن' : '✅ فعال'}</span>
+                  ${u.username !== 'رضا برمودا' ? `
+                    <span style="display:flex;gap:6px;flex-wrap:wrap;">
+                      <button type="button" class="btn-sm btn-blue" onclick="window._changeUserRole('${escapeHTML(u.username)}')">تغییر نقش</button>
+                      <button type="button" class="btn-sm ${u.banned ? 'btn-green' : 'btn-red'}" onclick="window._toggleBan('${escapeHTML(u.username)}')">${u.banned ? 'رفع بن' : 'بن'}</button>
+                      <button type="button" class="btn-sm btn-dark" onclick="window._changeUserPass('${escapeHTML(u.username)}')">تغییر رمز</button>
+                    </span>
+                  ` : ''}
+                </div>
+                <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">
+                  🆔 سروش: ${escapeHTML(u.soroushId || 'ندارد')} | 🔐 رمز: ${escapeHTML(u.password)}
+                </div>
+              </div>
+            `).join('');
+            break;
+          }
+          case 'teams': {
+            el.innerHTML = `<h3>🏆 تیم‌ها</h3>` + DB.teams.map(t => `
+              <div class="glass2" style="padding:12px 16px;margin:6px 0;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;border-radius:14px;">
+                <span><strong>${escapeHTML(t.name)}</strong> (${escapeHTML(t.league)}) | مدیر: ${t.manager ? escapeHTML(t.manager) : 'ندارد'} | بودجه: ${t.budget}M</span>
+                <span style="display:flex;gap:6px;flex-wrap:wrap;">
+                  ${!t.manager ? `<button type="button" class="btn-sm btn-red" onclick="window._deleteTeam(${t.id})">حذف تیم</button>` : ''}
+                  ${t.manager ? `<button type="button" class="btn-sm btn-dark" onclick="window._removeManager(${t.id})">برکناری</button>` : ''}
+                  <button type="button" class="btn-sm btn-orange" onclick="window._removePlayerFromTeam(${t.id})">🗑️ حذف بازیکن از تیم</button>
+                </span>
+              </div>
+            `).join('') + `<br><button type="button" class="btn-green btn-sm" onclick="window._addTeam()">➕ افزودن تیم جدید</button>`;
+            break;
+          }
+          case 'budget': {
+            el.innerHTML = `
+              <h3>💰 مدیریت بودجه</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+                <select id="budgetTeam" style="flex:1;min-width:160px;">${DB.teams.map(t=>`<option value="${t.id}">${escapeHTML(t.name)}</option>`).join('')}</select>
+                <input type="number" id="budgetAmount" placeholder="مبلغ" style="flex:1;min-width:130px;">
+                <button type="button" class="btn-green btn-sm" onclick="window._adjustBudget()">اعمال</button>
+              </div>
+            `;
+            break;
+          }
+          case 'quota': {
+            el.innerHTML = `
+              <h3>📊 مدیریت سهمیه</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+                <select id="quotaTeam" style="flex:1;min-width:160px;">${DB.teams.map(t=>`<option value="${t.id}">${escapeHTML(t.name)}</option>`).join('')}</select>
+                <select id="quotaType" style="flex:1;min-width:130px;"><option value="foreign">🌍 خارجی</option><option value="local">🇧🇲 داخلی</option></select>
+                <input type="number" id="quotaAmount" placeholder="تعداد" style="flex:1;min-width:110px;">
+                <button type="button" class="btn-green btn-sm" onclick="window._adjustQuota()">اعمال</button>
+              </div>
+            `;
+            break;
+          }
+          case 'requests': {
+            const tradeReqs = DB.requests.filter(r => r.type === 'trade_offer' && r.status === 'pending_admin');
+            const otherReqs = DB.requests.filter(r => r.type !== 'trade_offer' && r.status === 'pending');
+            let html = `<h3>📋 درخواست‌های در انتظار</h3>`;
+            if (tradeReqs.length > 0) {
+              html += `<h4 style="color:#ff9800;margin-top:10px;">🔄 درخواست‌های معاوضه (نیاز به تایید نهایی)</h4>`;
+              tradeReqs.forEach(r => {
+                html += `
+                  <div class="glass2" style="padding:12px 16px;margin:6px 0;border-radius:14px;border-right:3px solid #ff9800;">
+                    <div><strong>🔄 معاوضه</strong> بین <strong>${escapeHTML(r.fromUser)}</strong> و <strong>${escapeHTML(r.toUser)}</strong></div>
+                    <div>بازیکن ${escapeHTML(r.myPlayerName)} (از ${escapeHTML(r.fromUser)}) ↔️ ${escapeHTML(r.targetPlayerName)} (از ${escapeHTML(r.toUser)})</div>
+                    ${r.cash > 0 ? `<div>💰 نقدی: ${r.cash}M</div>` : ''}
+                    <div class="text-muted" style="font-size:0.8rem;">🕐 ${r.time}</div>
+                    <div style="margin-top:8px;display:flex;gap:8px;">
+                      <button type="button" class="btn-sm btn-green" onclick="window._approveRequest(${r.id})">✅ تایید معاوضه</button>
+                      <button type="button" class="btn-sm btn-red" onclick="window._rejectRequest(${r.id})">❌ رد معاوضه</button>
+                    </div>
+                  </div>
+                `;
+              });
+            }
+            if (otherReqs.length > 0) {
+              html += `<h4 style="margin-top:10px;">📋 سایر درخواست‌ها</h4>`;
+              otherReqs.forEach(r => {
+                let typeLabel = r.type;
+                if (r.type === 'team_registration') typeLabel = 'ثبت نام تیم';
+                else if (r.type === 'sell_player') typeLabel = 'فروش بازیکن';
+                else if (r.type === 'market_buy') typeLabel = 'خرید از انتقالات';
+                else if (r.type === 'buy_budget') typeLabel = 'خرید بودجه';
+                else if (r.type === 'final_contract') typeLabel = 'قرارداد نهایی';
+                else if (r.type === 'agent_request') typeLabel = 'درخواست مذاکره';
+                html += `
+                  <div class="glass2" style="padding:12px 16px;margin:6px 0;border-radius:14px;">
+                    <div><strong>${escapeHTML(r.username || r.fromUser || '')}</strong> - ${typeLabel}: ${escapeHTML(r.playerName || r.teamName || '')} ${r.price ? '('+r.price+'M)' : ''}</div>
+                    <div class="text-muted" style="font-size:0.8rem;">🕐 ${r.time}</div>
+                    <div style="margin-top:8px;display:flex;gap:8px;">
+                      <button type="button" class="btn-sm btn-green" onclick="window._approveRequest(${r.id})">✅ تایید</button>
+                      <button type="button" class="btn-sm btn-red" onclick="window._rejectRequest(${r.id})">❌ رد</button>
+                    </div>
+                  </div>
+                `;
+              });
+            }
+            if (tradeReqs.length === 0 && otherReqs.length === 0) html += '<p class="text-muted">درخواستی نیست</p>';
+            el.innerHTML = html;
+            break;
+          }
+          case 'newsMgmt': {
+            const news = DB.newsPosts.slice(-50).reverse();
+            el.innerHTML = `
+              <h3>📰 مدیریت اخبار (حذف)</h3>
+              <div style="max-height:400px;overflow-y:auto;">
+                ${news.length ? news.map(p => `
+                  <div class="news-item">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                      <div><span class="sender">${p.auto ? '🤖 سیستم' : escapeHTML(p.sender)}</span><span class="time">${p.time}</span></div>
+                      <button class="dots-btn" onclick="window._deleteNews('${p.id}')">⋯</button>
+                    </div>
+                    <div>${escapeHTML(p.text)}</div>
+                  </div>
+                `).join('') : '<p class="text-muted">خبری وجود ندارد</p>'}
+              </div>
+            `;
+            break;
+          }
+          case 'adminsMgmt': {
+            const users = DB.users.filter(u => u.username !== 'رضا برمودا');
+            el.innerHTML = `
+              <h3>👤 مدیریت ادمین‌ها</h3>
+              <p style="color:#aaa;font-size:0.9rem;">نقش‌های ویژه: ناظر، نماینده، مدیر بازیکنان اولیه، ادمین اخبار</p>
+              ${users.map(u => `
+                <div class="glass2" style="padding:12px 16px;margin:8px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;border-radius:14px;">
+                  <span><strong>${escapeHTML(u.username)}</strong> (نقش فعلی: ${escapeHTML(u.role)})</span>
+                  <div style="display:flex;gap:6px;">
+                    <select id="role_${escapeHTML(u.username)}" style="width:auto;min-width:130px;">
+                      <option value="user" ${u.role==='user'?'selected':''}>کاربر عادی</option>
+                      <option value="observer" ${u.role==='observer'?'selected':''}>ناظر</option>
+                      <option value="agent" ${u.role==='agent'?'selected':''}>نماینده</option>
+                      <option value="starter_manager" ${u.role==='starter_manager'?'selected':''}>مدیر بازیکنان اولیه</option>
+                      <option value="news_admin" ${u.role==='news_admin'?'selected':''}>ادمین اخبار</option>
+                    </select>
+                    <button type="button" class="btn-sm btn-blue" onclick="window._setUserRole('${escapeHTML(u.username)}')">اعمال</button>
+                  </div>
+                </div>
+              `).join('')}
+            `;
+            break;
+          }
+          case 'broadcast': {
+            el.innerHTML = `
+              <h3>📢 پیام همگانی</h3>
+              <textarea id="broadcastText" placeholder="متن پیام..." style="min-height:80px;"></textarea>
+              <button type="button" class="btn-blue btn-sm" onclick="window._broadcast()" style="margin-top:8px;">📨 ارسال به همه</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('stats')">📊 آمار</button>
+            `;
+            break;
+          }
+          case 'stats': {
+  const totalUsers = DB.users.length;
+  const totalTeams = DB.teams.length;
+  const filledTeams = DB.teams.filter(t => t.manager).length;
+  const emptyTeams = totalTeams - filledTeams;
+  const totalTransfers = DB.transferHistory.length;
+  const buys = DB.transferHistory.filter(h => h.type === 'buy').length;
+  const trades = DB.transferHistory.filter(h => h.type === 'trade').length;
+  const negotiations = DB.transferHistory.filter(h => h.type === 'negotiation').length;
+  const totalNews = DB.newsPosts.length;
+  const totalInbox = DB.inboxMessages.length;
+
+  el.innerHTML = `
+    <h3>📊 آمار لیگ برمودا</h3>
+    <div class="glass2" style="padding:20px; border-radius:16px;">
+      <h4>👥 کاربران و تیم‌ها</h4>
+      <p>👤 تعداد کاربران: <strong>${totalUsers}</strong> نفر</p>
+      <p>🏆 تعداد تیم‌ها: <strong>${totalTeams}</strong> تیم</p>
+      <p>✅ تیم‌های دارای مربی: <strong>${filledTeams}</strong> تیم</p>
+      <p>📋 تیم‌های خالی: <strong>${emptyTeams}</strong> تیم</p>
+    </div>
+    <div class="glass2" style="padding:20px; border-radius:16px; margin-top:12px;">
+      <h4>🔄 نقل و انتقالات</h4>
+      <p>کل نقل و انتقالات: <strong>${totalTransfers}</strong> مورد</p>
+      <p>• خرید از بازار: <strong>${buys}</strong></p>
+      <p>• معاوضه: <strong>${trades}</strong></p>
+      <p>• قرارداد با نماینده: <strong>${negotiations}</strong></p>
+    </div>
+    <div class="glass2" style="padding:20px; border-radius:16px; margin-top:12px;">
+      <h4>📰 محتوا</h4>
+      <p>اخبار منتشرشده: <strong>${totalNews}</strong> خبر</p>
+      <p>پیام‌های صندوق: <strong>${totalInbox}</strong> پیام</p>
+    </div>
+  `;
+  break;
+}
+        }
+      }
+
+      window._adminSub = function(sub) { renderAdminSubPage(sub); };
+      window._setUserRole = function(username) {
+        const select = document.getElementById('role_' + username);
+        if (!select) return;
+        const newRole = select.value;
+        const user = DB.users.find(u => u.username === username);
+        if (user && user.role !== 'admin') {
+          user.role = newRole;
+          saveDB();
+          showToast(`✅ نقش ${username} به ${newRole} تغییر یافت.`);
+          renderAdminSubPage('adminsMgmt');
+        }
+      };
+
+      // ========== APPROVE / REJECT REQUESTS ==========
+      window._approveRequest = function(reqId) {
+        const req = DB.requests.find(r => r.id === reqId);
+        if (!req) return;
+        
+        try {
+          req.status = 'approved';
+
+          switch (req.type) {
+            case 'team_registration': {
+              const team = DB.teams.find(t => t.id === req.teamId);
+              if (!team) throw new Error('تیم پیدا نشد');
+              team.manager = req.username;
+              if (currentUser && currentUser.username === req.username) {
+                currentUser = DB.users.find(u => u.username === req.username);
+              }
+              addInboxMessage(req.username, '✅ درخواست ثبت نام تیم شما تایید شد!');
+              addNews('سیستم', `📋 ${req.username} رسماً به عنوان سرمربی جدید ${team.name} منصوب شد.`, true);
+              break;
+            }
+            case 'sell_player': {
+              const player = DB.players.find(p => p.id === req.playerId);
+              if (!player) throw new Error('بازیکن پیدا نشد');
+              player.forSale = true;
+              player.salePrice = req.price;
+              addInboxMessage(req.username, `✅ درخواست فروش ${player.name} تایید شد. بازیکن به انتقالات لیگ اضافه شد.`);
+              addNews('سیستم', `🏷️ ${player.name} با قیمت ${req.price}M وارد بازار نقل و انتقالات شد.`, true);
+              break;
+            }
+            case 'market_buy': {
+              const player = DB.players.find(p => p.id === req.playerId);
+              const buyerTeam = DB.teams.find(t => t.id === req.teamId);
+              const sellerTeam = DB.teams.find(t => t.id === player?.teamId);
+              if (!player || !buyerTeam || !sellerTeam) throw new Error('اطلاعات ناقص');
+              
+              if (buyerTeam.budget < req.price) throw new Error('بودجه تیم خریدار کافی نیست');
+              if (getTeamPlayers(buyerTeam.id).length >= MAX_PLAYERS) throw new Error(`تیم خریدار به حداکثر ${MAX_PLAYERS} بازیکن رسیده`);
+              if (getTeamPlayers(sellerTeam.id).length <= MIN_PLAYERS) throw new Error(`تیم فروشنده به حداقل ${MIN_PLAYERS} بازیکن می‌رسد`);
+
+              const isForeign = isForeignPlayer(player.nationality);
+              if (isForeign && buyerTeam.foreignQuota <= 0) throw new Error('سهمیه خارجی تیم خریدار پر است');
+              if (!isForeign && buyerTeam.localQuota <= 0) throw new Error('سهمیه داخلی تیم خریدار پر است');
+
+              sellerTeam.budget += req.price;
+              buyerTeam.budget -= req.price;
+              if (!player.isStarter) {
+                if (isForeign) { buyerTeam.foreignQuota--; sellerTeam.foreignQuota++; }
+                else { buyerTeam.localQuota--; sellerTeam.localQuota++; }
+              }
+              player.teamId = buyerTeam.id;
+              player.forSale = false;
+              player.salePrice = null;
+
+              DB.transferHistory.push({
+                type: 'buy',
+                data: { buyer: buyerTeam.name, seller: sellerTeam.name, player: player.name, price: req.price },
+                time: new Date().toLocaleString('fa-IR')
+              });
+              while (DB.transferHistory.length > MAX_TRANSFER_HISTORY) DB.transferHistory.shift();
+              addNews('سیستم', `💣 بمب نقل و انتقالات! ${player.name} با مبلغ ${req.price}M از ${sellerTeam.name} به ${buyerTeam.name} پیوست.`, true);
+              addInboxMessage(req.username, `✅ خرید ${player.name} با قیمت ${req.price}M تایید شد.`);
+              if (sellerTeam.manager) addInboxMessage(sellerTeam.manager, `💰 فروش ${player.name} به مبلغ ${req.price}M به حساب شما واریز شد.`);
+              break;
+            }
+            case 'trade_offer': {
+              const fromTeam = DB.teams.find(t => t.id === req.fromTeamId);
+              const toTeam = DB.teams.find(t => t.id === req.targetTeamId);
+              const myPlayer = DB.players.find(p => p.id === req.myPlayerId);
+              const targetPlayer = DB.players.find(p => p.id === req.targetPlayerId);
+              if (!fromTeam || !toTeam || !myPlayer || !targetPlayer || myPlayer.teamId !== fromTeam.id || targetPlayer.teamId !== toTeam.id) throw new Error('اطلاعات معاوضه ناقص');
+
+              const myIsForeign = isForeignPlayer(myPlayer.nationality);
+              const targetIsForeign = isForeignPlayer(targetPlayer.nationality);
+
+              // Only adjust quotas for non-starter players
+              const fromNewForeign = fromTeam.foreignQuota + (myIsForeign && !myPlayer.isStarter ? 1 : 0) - (targetIsForeign && !targetPlayer.isStarter ? 1 : 0);
+              const fromNewLocal = fromTeam.localQuota + (!myIsForeign && !myPlayer.isStarter ? 1 : 0) - (!targetIsForeign && !targetPlayer.isStarter ? 1 : 0);
+              const toNewForeign = toTeam.foreignQuota + (targetIsForeign && !targetPlayer.isStarter ? 1 : 0) - (myIsForeign && !myPlayer.isStarter ? 1 : 0);
+              const toNewLocal = toTeam.localQuota + (!targetIsForeign && !targetPlayer.isStarter ? 1 : 0) - (!myIsForeign && !myPlayer.isStarter ? 1 : 0);
+
+              if (fromNewForeign < 0 || fromNewLocal < 0) throw new Error('سهمیه تیم مبدا برای معاوضه کافی نیست');
+              if (toNewForeign < 0 || toNewLocal < 0) throw new Error('سهمیه تیم مقصد برای معاوضه کافی نیست');
+              if (req.cash > 0 && fromTeam.budget < req.cash) throw new Error('بودجه تیم مبدا برای پرداخت نقدی کافی نیست');
+
+              fromTeam.foreignQuota = fromNewForeign;
+              fromTeam.localQuota = fromNewLocal;
+              toTeam.foreignQuota = toNewForeign;
+              toTeam.localQuota = toNewLocal;
+              myPlayer.teamId = toTeam.id;
+              targetPlayer.teamId = fromTeam.id;
+              if (req.cash > 0) { fromTeam.budget -= req.cash; toTeam.budget += req.cash; }
+
+              DB.transferHistory.push({
+                type: 'trade',
+                data: { from: fromTeam.name, to: toTeam.name, player1: myPlayer.name, player2: targetPlayer.name, cash: req.cash },
+                time: new Date().toLocaleString('fa-IR')
+              });
+              while (DB.transferHistory.length > MAX_TRANSFER_HISTORY) DB.transferHistory.shift();
+              addNews('سیستم', `🤝 دست‌بدهٔ بزرگ! ${myPlayer.name} و ${targetPlayer.name} بین ${fromTeam.name} و ${toTeam.name} معاوضه شدند.`, true);
+              addInboxMessage(req.fromUser, `✅ معاوضه ${myPlayer.name} با ${targetPlayer.name} تایید شد!`);
+              addInboxMessage(req.toUser, `✅ معاوضه ${targetPlayer.name} با ${myPlayer.name} تایید شد!`);
+              break;
+            }
+            case 'final_contract': {
+              const neg = DB.negotiations.find(n => n.id === req.negId);
+              if (!neg) throw new Error('مذاکره پیدا نشد');
+              const team = DB.teams.find(t => t.manager === neg.teamUsername);
+              if (!team) throw new Error('تیم پیدا نشد');
+              const isForeign = isForeignPlayer(neg.nationality);
+              if (isForeign && team.foreignQuota <= 0) throw new Error('سهمیه خارجی کافی نیست');
+              if (!isForeign && team.localQuota <= 0) throw new Error('سهمیه داخلی کافی نیست');
+              if (team.budget < req.price) throw new Error('بودجه تیم کافی نیست');
+              if (getTeamPlayers(team.id).length >= MAX_PLAYERS) throw new Error(`حداکثر ${MAX_PLAYERS} بازیکن مجاز است`);
+
+              team.budget -= req.price;
+              if (isForeign) team.foreignQuota--; else team.localQuota--;
+              const newPlayer = {
+                id: DB.playerIdCounter++,
+                name: neg.playerName,
+                position: neg.position,
+                nationality: neg.nationality,
+                teamId: team.id,
+                isStarter: false,
+                forSale: false,
+                salePrice: null
+              };
+              DB.players.push(newPlayer);
+              DB.transferHistory.push({
+                type: 'negotiation',
+                data: { team: team.name, player: neg.playerName, price: req.price, duration: req.duration },
+                time: new Date().toLocaleString('fa-IR')
+              });
+              while (DB.transferHistory.length > MAX_TRANSFER_HISTORY) DB.transferHistory.shift();
+              addNews('سیستم', `✍️ رسمی: ${neg.playerName} با قراردادی ${req.duration} فصله به ارزش ${req.price}M به ${team.name} پیوست.`, true);
+              addInboxMessage(neg.teamUsername, `✅ قرارداد ${neg.playerName} نهایی شد!`);
+              addInboxMessage(neg.agentUsername, `✅ قرارداد ${neg.playerName} نهایی شد!`);
+              neg.status = 'done';
+              break;
+            }
+            default: throw new Error('نوع درخواست ناشناخته');
+          }
+
+          saveDB();
+          if (currentAdminSub) renderAdminSubPage(currentAdminSub);
+          showToast('✅ درخواست تایید شد.');
+        } catch (e) {
+          console.error(e);
+          req.status = 'pending';
+          saveDB();
+          if (currentAdminSub) renderAdminSubPage(currentAdminSub);
+          showToast('❌ خطا: ' + e.message, true);
+        }
+      };
+
+      window._rejectRequest = function(reqId) {
+        const req = DB.requests.find(r => r.id === reqId);
+        if (!req) return;
+        req.status = 'rejected';
+        
+        // **FIX:** rollback forSale if sell_player is rejected
+        if (req.type === 'sell_player' && req.playerId) {
+          const player = DB.players.find(p => p.id === req.playerId);
+          if (player) {
+            player.forSale = false;
+            player.salePrice = null;
+          }
+        }
+        
+        if (req.username) addInboxMessage(req.username, '❌ درخواست شما رد شد.');
+        if (req.fromUser) addInboxMessage(req.fromUser, '❌ درخواست شما رد شد.');
+        if (req.type === 'trade_offer') addInboxMessage(req.toUser, '❌ درخواست معاوضه رد شد.');
+        saveDB();
+        if (currentAdminSub) renderAdminSubPage(currentAdminSub);
+        showToast('❌ درخواست رد شد.');
+      };
+
+      // ========== ADMIN ACTION FUNCTIONS ==========
+      window._changeUserRole = function(username) {
+        const roles = ['user', 'observer', 'agent', 'starter_manager', 'news_admin'];
+        const user = DB.users.find(u => u.username === username);
+        if (!user || user.role === 'admin') return;
+        const idx = roles.indexOf(user.role);
+        user.role = roles[(idx + 1) % roles.length];
+        saveDB();
+        renderAdminSubPage('users');
+        showToast('✅ نقش تغییر کرد.');
+      };
+      window._toggleBan = function(username) {
+        const user = DB.users.find(u => u.username === username);
+        if (!user || user.role === 'admin') return;
+        user.banned = !user.banned;
+        saveDB();
+        renderAdminSubPage('users');
+      };
+      window._changeUserPass = function(username) {
+        const newPass = prompt('رمز جدید برای ' + username + ':');
+        if (!newPass || newPass.length < 3) { showToast('رمز باید حداقل ۳ کاراکتر باشد.', true); return; }
+        const user = DB.users.find(u => u.username === username);
+        if (user) { user.password = newPass; saveDB(); showToast('✅ رمز تغییر کرد.'); renderAdminSubPage('users'); }
+      };
+      window._deleteTeam = function(teamId) {
+        if (!confirm('آیا از حذف تیم مطمئن هستید؟')) return;
+        const team = DB.teams.find(t => t.id === teamId);
+        if (team && team.manager) { showToast('این تیم مدیر دارد، ابتدا برکناری کنید.', true); return; }
+        DB.teams = DB.teams.filter(t => t.id !== teamId);
+        DB.players = DB.players.filter(p => p.teamId !== teamId);
+        saveDB();
+        renderAdminSubPage('teams');
+        showToast('✅ تیم حذف شد.');
+      };
+      window._removeManager = function(teamId) {
+        const team = DB.teams.find(t => t.id === teamId);
+        if (team) { team.manager = null; saveDB(); renderAdminSubPage('teams'); showToast('✅ مدیر برکنار شد.'); }
+      };
+      window._addTeam = function() {
+        const name = prompt('نام تیم:');
+        if (!name) return;
+        const league = prompt('لیگ (پرمیر لیگ / چمپیونشیپ):');
+        if (!league) return;
+        const budget = league === 'پرمیر لیگ' ? DB.seasonSettings.premierBudget || 500 : DB.seasonSettings.championshipBudget || 300;
+        const foreignQuota = league === 'پرمیر لیگ' ? DB.seasonSettings.premierForeign || 8 : DB.seasonSettings.championshipForeign || 6;
+        const localQuota = league === 'پرمیر لیگ' ? DB.seasonSettings.premierLocal || 9 : DB.seasonSettings.championshipLocal || 8;
+        DB.teams.push({ id: DB.teamIdCounter++, name, league, manager: null, budget, foreignQuota, localQuota });
+        saveDB();
+        renderAdminSubPage('teams');
+        showToast('✅ تیم اضافه شد.');
+      };
+      window._adjustBudget = function() {
+        const teamId = parseInt(document.getElementById('budgetTeam').value);
+        const amount = parseInt(document.getElementById('budgetAmount').value);
+        if (!amount) { showToast('مبلغ را وارد کنید.', true); return; }
+        const team = DB.teams.find(t => t.id === teamId);
+        if (team) { team.budget += amount; if (team.budget < 0) team.budget = 0; saveDB(); showToast('✅ بودجه بروز شد.'); renderAdminSubPage('budget'); }
+      };
+      window._adjustQuota = function() {
+        const teamId = parseInt(document.getElementById('quotaTeam').value);
+        const type = document.getElementById('quotaType').value;
+        const amount = parseInt(document.getElementById('quotaAmount').value);
+        if (!amount) { showToast('مقدار را وارد کنید.', true); return; }
+        const team = DB.teams.find(t => t.id === teamId);
+        if (team) {
+          if (type === 'foreign') { team.foreignQuota += amount; if (team.foreignQuota < 0) team.foreignQuota = 0; }
+          else { team.localQuota += amount; if (team.localQuota < 0) team.localQuota = 0; }
+          saveDB();
+          showToast('✅ سهمیه بروز شد.');
+          renderAdminSubPage('quota');
+        }
+      };
+      window._removePlayerFromTeam = function(teamId) {
+        const team = DB.teams.find(t => t.id === teamId);
+        if (!team) return;
+        const players = getTeamPlayers(teamId);
+        if (players.length === 0) { showToast('این تیم بازیکنی ندارد.', true); return; }
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+          <h3>🗑️ حذف بازیکن از تیم ${escapeHTML(team.name)}</h3>
+          <p style="color:#aaa;">با حذف بازیکن، سهمیه آزاد می‌شود.</p>
+          <select id="removePlayerSelect" style="margin:10px 0;">
+            ${players.map(p => `<option value="${p.id}">${escapeHTML(p.name)} (${escapeHTML(p.position)})</option>`).join('')}
+          </select>
+          <div id="removePlayerError"></div>
+          <button type="button" class="btn-red" onclick="window._submitRemovePlayer(${teamId})">🗑️ حذف بازیکن</button>
+          <button type="button" class="btn-dark" onclick="window._closeOverlay()" style="margin-top:8px;">بستن</button>`;
+        overlay.classList.remove('hidden');
+      };
+      window._submitRemovePlayer = function(teamId) {
+        const playerId = parseInt(document.getElementById('removePlayerSelect').value);
+        const errEl = document.getElementById('removePlayerError');
+        if (!playerId) { errEl.innerHTML = '<div class="msg-error">بازیکنی انتخاب نشده</div>'; return; }
+        const player = DB.players.find(p => p.id === playerId);
+        if (!player || player.teamId !== teamId) return;
+        const team = DB.teams.find(t => t.id === teamId);
+        if (!team) return;
+        // Only free quota if NOT a starter
+        if (!player.isStarter) {
+          if (isForeignPlayer(player.nationality)) team.foreignQuota++;
+          else team.localQuota++;
+        }
+        DB.players = DB.players.filter(p => p.id !== playerId);
+        saveDB();
+        window._closeOverlay();
+        renderAdminSubPage('teams');
+        showToast(`✅ بازیکن ${player.name} از تیم حذف شد و سهمیه آزاد شد.`);
+      };
+      window._broadcast = function() {
+        const text = document.getElementById('broadcastText').value.trim();
+        if (!text) { showToast('متن را وارد کنید.', true); return; }
+        DB.users.forEach(u => {
+          if (u.username !== 'رضا برمودا') addInboxMessage(u.username, '📢 پیام همگانی: ' + text);
+        });
+        saveDB();
+        showToast('✅ پیام همگانی ارسال شد.');
+        renderAdminSubPage('broadcast');
+      };
+      window._budgetAllTeams = function(league, amount) {
+        const teams = DB.teams.filter(t => t.league === league);
+        teams.forEach(t => {
+          t.budget += amount;
+          if (t.budget < 0) t.budget = 0;
+          if (t.manager) addInboxMessage(t.manager, `💰 بودجه تیم ${t.name} به مبلغ ${amount > 0 ? '+' : ''}${amount}M تغییر یافت.`);
+        });
+        saveDB();
+        showToast(`✅ بودجه تمام تیم‌های ${league} به مبلغ ${amount > 0 ? '+' : ''}${amount}M تغییر یافت.`);
+        renderAdminSubPage('budgetAll');
+      };
+      window._budgetAllTeamsCustom = function() {
+        const amount = parseInt(document.getElementById('budgetAllAmount').value);
+        const league = document.getElementById('budgetAllLeague').value;
+        if (!amount || isNaN(amount)) { showToast('مبلغ معتبر وارد کنید.', true); return; }
+        window._budgetAllTeams(league, amount);
+      };
+      window._quotaAllTeams = function(league, type, amount) {
+        const teams = DB.teams.filter(t => t.league === league);
+        teams.forEach(t => {
+          if (type === 'foreign') { t.foreignQuota += amount; if (t.foreignQuota < 0) t.foreignQuota = 0; }
+          else { t.localQuota += amount; if (t.localQuota < 0) t.localQuota = 0; }
+          if (t.manager) addInboxMessage(t.manager, `📊 سهمیه ${type==='foreign'?'خارجی':'داخلی'} تیم ${t.name} به مقدار ${amount>0?'+':''}${amount} تغییر یافت.`);
+        });
+        saveDB();
+        showToast(`✅ سهمیه ${type==='foreign'?'خارجی':'داخلی'} تمام تیم‌های ${league} به مقدار ${amount>0?'+':''}${amount} تغییر یافت.`);
+        renderAdminSubPage('quotaAll');
+      };
+      window._quotaAllTeamsCustom = function() {
+        const amount = parseInt(document.getElementById('quotaAllAmount').value);
+        const league = document.getElementById('quotaAllLeague').value;
+        const type = document.getElementById('quotaAllType').value;
+        if (!amount || isNaN(amount)) { showToast('مقدار معتبر وارد کنید.', true); return; }
+        window._quotaAllTeams(league, type, amount);
+      };
+
+      // ========== STARTER MANAGER PANEL ==========
+      function renderStarterPanel() {
+        const container = document.getElementById('mainContent');
+        if (!isStarterManager() && !isAdmin()) { container.innerHTML = '<p class="text-muted">دسترسی محدود</p>'; return; }
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>🎯 مدیریت بازیکنان اولیه</h2>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0;">
+              <select id="starterTeam" style="flex:1;min-width:160px;">${DB.teams.map(t=>`<option value="${t.id}">${escapeHTML(t.name)}</option>`).join('')}</select>
+              <input type="text" id="starterName" placeholder="نام" style="flex:1;min-width:110px;">
+              <input type="text" id="starterPos" placeholder="پست" style="flex:1;min-width:110px;">
+              <select id="starterNat" style="flex:1;min-width:130px;"><option value="برمودا">🇧🇲 برمودا</option><option value="انگلیس">🏴󠁧󠁢󠁥󠁮󠁧󠁿 انگلیس</option><option value="خارجی">🌍 خارجی</option></select>
+              <button type="button" class="btn-green btn-sm" onclick="window._addStarter()">➕ افزودن</button>
+            </div>
+            <h4>📋 لیست بازیکنان اولیه:</h4>
+            <div style="max-height:250px;overflow-y:auto;">
+              ${DB.players.filter(p => p.isStarter).map(p => `
+                <div style="font-size:0.9rem;padding:6px 12px;background:rgba(255,255,255,0.04);border-radius:10px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;">
+                  <span>${escapeHTML(p.name)} (${escapeHTML(p.position)}) - تیم: ${escapeHTML(DB.teams.find(t=>t.id===p.teamId)?.name||'?')}</span>
+                  <button type="button" class="btn-red btn-xs" onclick="window._deleteStarter(${p.id})">❌</button>
+                </div>
+              `).join('') || '<p class="text-muted">هیچ بازیکن اولیه‌ای وجود ندارد</p>'}
+            </div>
+          </div>`;
+      }
+
+      window._addStarter = function() {
+        const teamId = parseInt(document.getElementById('starterTeam').value);
+        const name = document.getElementById('starterName').value.trim();
+        const position = document.getElementById('starterPos').value.trim();
+        const nationality = document.getElementById('starterNat').value;
+        if (!name || !position) { showToast('نام و پست را وارد کنید.', true); return; }
+        DB.players.push({
+          id: DB.playerIdCounter++,
+          name, position, nationality,
+          teamId,
+          isStarter: true,
+          forSale: false,
+          salePrice: null
+        });
+        // STARTERS DO NOT AFFECT QUOTA
+        saveDB();
+        renderPage('starters');
+        showToast('✅ بازیکن اولیه اضافه شد (بدون مصرف سهمیه).');
+      };
+
+      window._deleteStarter = function(playerId) {
+        if (!confirm('آیا از حذف این بازیکن اولیه مطمئن هستید؟')) return;
+        const player = DB.players.find(p => p.id === playerId);
+        if (!player || !player.isStarter) return;
+        // STARTERS DO NOT FREE QUOTA
+        DB.players = DB.players.filter(p => p.id !== playerId);
+        saveDB();
+        renderPage('starters');
+        showToast('✅ بازیکن اولیه حذف شد.');
+      };
+
+      // ========== SEASON SETTINGS ==========
+      function renderSeasonSettings() {
+        const container = document.getElementById('mainContent');
+        if (!isAdmin()) { container.innerHTML = '<p class="text-muted">دسترسی محدود</p>'; return; }
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>⚙️ تنظیمات سیزن</h2>
+            <div style="display:flex;flex-direction:column;gap:16px;margin-top:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <span style="font-size:1.1rem;">🔄 نقل و انتقالات</span>
+                <button type="button" class="btn-sm ${DB.seasonSettings.transfersOpen ? 'btn-green' : 'btn-red'}" onclick="window._toggleTransfers()">
+                  ${DB.seasonSettings.transfersOpen ? '✅ باز' : '⛔ بسته'}
+                </button>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <span style="font-size:1.1rem;">📝 ثبت نام تیم</span>
+                <button type="button" class="btn-sm ${DB.seasonSettings.registrationOpen ? 'btn-green' : 'btn-red'}" onclick="window._toggleRegistration()">
+                  ${DB.seasonSettings.registrationOpen ? '✅ باز' : '⛔ بسته'}
+                </button>
+              </div>
+              <hr>
+              <h3>💰 تنظیمات بودجه اولیه</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+                <label>پرمیر لیگ:</label>
+                <input type="number" id="premierBudget" value="${DB.seasonSettings.premierBudget || 500}" style="width:100px;">
+                <label>چمپیونشیپ:</label>
+                <input type="number" id="championshipBudget" value="${DB.seasonSettings.championshipBudget || 300}" style="width:100px;">
+                <button type="button" class="btn-sm btn-green" onclick="window._saveSeasonBudget()">💾 ذخیره</button>
+              </div>
+              <hr>
+              <h3>📊 تنظیمات سهمیه اولیه</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+                <label>پرمیر خارجی:</label><input type="number" id="premierForeign" value="${DB.seasonSettings.premierForeign || 8}" style="width:70px;">
+                <label>پرمیر داخلی:</label><input type="number" id="premierLocal" value="${DB.seasonSettings.premierLocal || 9}" style="width:70px;">
+                <label>چمپیونشیپ خارجی:</label><input type="number" id="championshipForeign" value="${DB.seasonSettings.championshipForeign || 6}" style="width:70px;">
+                <label>چمپیونشیپ داخلی:</label><input type="number" id="championshipLocal" value="${DB.seasonSettings.championshipLocal || 8}" style="width:70px;">
+                <button type="button" class="btn-sm btn-green" onclick="window._saveSeasonQuota()">💾 ذخیره</button>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      window._toggleTransfers = function() {
+        DB.seasonSettings.transfersOpen = !DB.seasonSettings.transfersOpen;
+        saveDB();
+        if (DB.seasonSettings.transfersOpen) addNews('سیستم', '🔥 بازار نقل و انتقالات تابستانی رسماً باز شد!', true);
+        else addNews('سیستم', '⛔ پنجره نقل و انتقالات بسته شد. تیم‌ها باید با قدرت فعلی ادامه دهند.', true);
+        renderPage('seasonSettings');
+      };
+      window._toggleRegistration = function() {
+        DB.seasonSettings.registrationOpen = !DB.seasonSettings.registrationOpen;
+        saveDB();
+        if (DB.seasonSettings.registrationOpen) addNews('سیستم', '📝 فراخوان ثبت‌نام سرمربیان جدید در لیگ برمودا آغاز شد.', true);
+        else addNews('سیستم', '📝 مهلت ثبت‌نام مربیان جدید به پایان رسید.', true);
+        renderPage('seasonSettings');
+      };
+      window._saveSeasonBudget = function() {
+        const pb = parseInt(document.getElementById('premierBudget').value);
+        const cb = parseInt(document.getElementById('championshipBudget').value);
+        if (!pb || !cb || pb<0 || cb<0) { showToast('مقادیر معتبر وارد کنید.', true); return; }
+        DB.seasonSettings.premierBudget = pb;
+        DB.seasonSettings.championshipBudget = cb;
+        saveDB();
+        showToast('✅ ذخیره شد.');
+        renderSeasonSettings();
+      };
+      window._saveSeasonQuota = function() {
+        const pf = parseInt(document.getElementById('premierForeign').value);
+        const pl = parseInt(document.getElementById('premierLocal').value);
+        const cf = parseInt(document.getElementById('championshipForeign').value);
+        const cl = parseInt(document.getElementById('championshipLocal').value);
+        if (pf<0||pl<0||cf<0||cl<0) { showToast('مقادیر معتبر وارد کنید.', true); return; }
+        DB.seasonSettings.premierForeign = pf;
+        DB.seasonSettings.premierLocal = pl;
+        DB.seasonSettings.championshipForeign = cf;
+        DB.seasonSettings.championshipLocal = cl;
+        saveDB();
+        showToast('✅ ذخیره شد.');
+        renderSeasonSettings();
+      };
+
+      // ========== SETTINGS PAGE ==========
+      function renderSettingsPage() {
+        const container = document.getElementById('mainContent');
+        container.innerHTML = `
+          <div class="card glass">
+            <h2>⚙️ منوی تنظیمات برنامه</h2>
+            <div style="display:flex;flex-direction:column;gap:16px;margin-top:12px;">
+              <div class="glass2" style="padding:18px;border-radius:16px;">
+                <h3>🔄 ریست نرم (Soft Reset)</h3>
+                <p style="color:#aaa;font-size:0.9rem;">✅ تیم‌ها و بازیکنان باقی می‌مونن، مالکیت تیم‌ها پاک میشه، درخواست‌ها/اخبار/مذاکرات/تاریخچه پاک میشه، بودجه و سهمیه به حالت اول برمیگرده.</p>
+                <button type="button" class="btn-red" onclick="window._softReset()" style="margin-top:8px;">🔄 انجام ریست نرم</button>
+              </div>
+              <div class="glass2" style="padding:18px;border-radius:16px;">
+                <h3>💥 ریست کلی (Hard Reset)</h3>
+                <p style="color:#aaa;font-size:0.9rem;">❌ همه چیز پاک میشه (تیم‌ها، بازیکنان، اخبار، درخواست‌ها...) اما حساب‌های کاربران و مدیرکل باقی می‌مونن.</p>
+                <button type="button" class="btn-red" onclick="window._hardReset()" style="margin-top:8px;">💣 انجام ریست کلی</button>
+              </div>
+              <div class="glass2" style="padding:18px;border-radius:16px;">
+                <h3>🔒 خاموش/روشن کردن برنامه</h3>
+                <p style="color:#aaa;font-size:0.9rem;">وضعیت فعلی: ${DB.appOff ? '🔴 خاموش (فقط مدیرکل)' : '🟢 روشن (همه)'}</p>
+                <button type="button" class="btn-dark" onclick="window._toggleApp()" style="margin-top:8px;">${DB.appOff ? '🟢 روشن کردن' : '🔴 خاموش کردن'} برنامه</button>
+              </div>
+              <div class="glass2" style="padding:18px;border-radius:16px;">
+                <h3>🔑 تغییر رمز مدیریت</h3>
+                <p style="color:#aaa;font-size:0.9rem;">رمز عبور مدیرکل (رضا برمودا) رو تغییر بده.</p>
+                <button type="button" class="btn-blue" onclick="window._changeAdminPass()" style="margin-top:8px;">🔑 تغییر رمز</button>
+                <div class="glass2" style="padding:18px;border-radius:16px;">
+  <h3>💾 بک‌آپ اطلاعات</h3>
+  <p style="color:#aaa;font-size:0.9rem;">دانلود یک نسخهٔ پشتیبان کامل از تمام اطلاعات لیگ (کاربران، تیم‌ها، بازیکنان، نقل و انتقالات، اخبار و پیام‌ها).</p>
+  <button type="button" class="btn-green" onclick="window._backupData()" style="margin-top:8px;">📥 دانلود فایل بک‌آپ</button>
+</div>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      window._softReset = function() {
+        if (!confirm('🔄 ریست نرم: مالکیت تیم‌ها پاک میشه، درخواست‌ها/چت/مذاکرات/تاریخچه پاک میشه، بودجه و سهمیه به حالت اول برمیگرده. ادامه؟')) return;
+        DB.teams.forEach(t => { t.manager = null; });
+        DB.teams.forEach(t => {
+          const isPremier = t.league === 'پرمیر لیگ';
+          t.budget = isPremier ? (DB.seasonSettings.premierBudget || 500) : (DB.seasonSettings.championshipBudget || 300);
+          t.foreignQuota = isPremier ? (DB.seasonSettings.premierForeign || 8) : (DB.seasonSettings.championshipForeign || 6);
+          t.localQuota = isPremier ? (DB.seasonSettings.premierLocal || 9) : (DB.seasonSettings.championshipLocal || 8);
+        });
+        DB.requests = [];
+        DB.newsPosts = [];
+        DB.negotiations = [];
+        DB.transferHistory = [];
+        DB.inboxMessages = [];
+        DB.chatBanned = [];
+        DB.chatTempBanned = [];
+        saveDB();
+        showToast('✅ ریست نرم انجام شد.');
+        renderPage('settings');
+      };
+
+      window._hardReset = function() {
+        if (!confirm('💣 ریست کلی: همه چیز پاک میشه! فقط حساب‌های کاربری باقی می‌مونن. ادامه؟')) return;
+        if (!confirm('⚠️ آخرین هشدار! این عمل قابل بازگشت نیست.')) return;
+        const users = [...DB.users];
+        DB = { ...JSON.parse(JSON.stringify(DEFAULT_DB)), users };
+        DB._lastUpdate = Date.now();
+        saveDB();
+        currentUser = null;
+        document.getElementById('topMenu').style.display = 'none';
+        renderPage('login');
+        showToast('✅ ریست کلی انجام شد.');
+      };
+
+      window._toggleApp = function() {
+        DB.appOff = !DB.appOff;
+        saveDB();
+        renderPage('settings');
+        showToast(DB.appOff ? '⛔ برنامه خاموش شد.' : '🟢 برنامه روشن شد.');
+      };
+
+      window._changeAdminPass = function() {
+        const newPass = prompt('🔑 رمز جدید مدیرکل:');
+        if (newPass && newPass.length >= 3) {
+          const admin = DB.users.find(u => u.username === 'رضا برمودا');
+          if (admin) admin.password = newPass;
+          saveDB();
+          showToast('✅ رمز تغییر کرد.');
+        }
+      };
+
+      // ========== OVERLAY ==========
+      window._backupData = function() {
+  try {
+    const backup = JSON.stringify(DB, null, 2);
+    const overlay = document.getElementById('overlay');
+    const modal = document.getElementById('modalContent');
+    modal.innerHTML = `
+      <h3>💾 بک‌آپ اطلاعات</h3>
+      <p style="color:#aaa; margin-bottom:10px;">متن زیر را کپی کرده و در یک فایل JSON ذخیره کنید.</p>
+      <textarea id="backupText" style="width:100%; height:300px; font-size:0.8rem; direction:ltr;" readonly>${escapeHTML(backup)}</textarea>
+      <button type="button" class="btn-blue btn-sm" onclick="window._copyBackup()" style="margin-top:10px;">📋 کپی کردن</button>
+      <button type="button" class="btn-dark btn-sm" onclick="window._closeOverlay()" style="margin-top:10px;">بستن</button>
+    `;
+    overlay.classList.remove('hidden');
+  } catch(e) {
+    showToast('❌ خطا: ' + e.message, true);
+  }
+};
+
+window._copyBackup = function() {
+  const textarea = document.getElementById('backupText');
+  textarea.select();
+  document.execCommand('copy');
+  showToast('✅ متن کپی شد. آن را در یک فایل JSON ذخیره کنید.');
+};
+window._closeOverlay = function() {
+        document.getElementById('overlay').classList.add('hidden');
+      };
+      document.getElementById('overlay').addEventListener('click', function(e) {
+        if (e.target === this) window._closeOverlay();
+      });
+
+      // ========== MENU ==========
+      document.getElementById('topMenu').addEventListener('click', function(e) {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  
+  // چک اینترنت
+  if (!navigator.onLine && btn.id !== 'btnLogout') {
+    showToast('⚠️ اینترنت قطع است. لطفاً اینترنت را روشن کنید.', true);
+    return;
+  }
+  
+  if (btn.id === 'btnLogout') {
+    currentUser = null;
+    document.getElementById('topMenu').style.display = 'none';
+    renderPage('login');
+    return;
+  }
+  const page = btn.dataset.page;
+  if (page) renderPage(page);
+});
+
+      // ========== INIT (CRITICAL ORDER) ==========
+      async function initApp() {
+  loadDB();
+
+  let cloudLoaded = false;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      const { data } = await supabase.from('bermuda_data').select('details').eq('id', 1).single();
+      if (data && data.details) {
+        const cloudDB = { ...DEFAULT_DB, ...data.details };
+        DB = cloudDB;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+        cloudLoaded = true;
+        break;
+      } else {
+        cloudLoaded = true;
+        break;
+      }
+    } catch(e) {
+      if (attempt < 5) await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+
+  if (!cloudLoaded) {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="card glass" style="text-align:center; padding:50px; margin-top:80px;">
+        <h2 style="color:#e05555;">⚠️ خطا در اتصال به سرور</h2>
+        <p style="color:#fff; margin-top:20px;">لطفاً اینترنت خود را بررسی کنید.</p>
+        <button class="btn-blue" onclick="location.reload()" style="margin-top:20px;">🔄 تلاش دوباره</button>
+      </div>`;
+    return;
+  }
+
+  ensureAdminAndDefaults();
+  initialSyncDone = true;
+
+  document.getElementById('topMenu').style.display = 'none';
+  renderPage('login');
+  startSync();
+  subscribeToChanges();
+  console.log('🏝️ لیگ مجازی برمودا - نسخه ضد فاجعه');
+}
+// ========== START THE APP ==========
+initApp();
+
+    })();
+  </script>
+</body>
+</html>
