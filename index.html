@@ -90,6 +90,7 @@
     <button type="button" class="menu-btn btn-dark hidden" data-page="seasonSettings" id="btnSeasonSettings">⚙️ تنظیمات سیزن</button>
     <button type="button" class="menu-btn btn-dark hidden" data-page="starters" id="btnStarters">🎯 بازیکنان اولیه</button>
     <button type="button" class="menu-btn btn-dark hidden" data-page="settings" id="btnSettings">⚙️ تنظیمات</button>
+    <button type="button" class="menu-btn btn-dark" onclick="window._fixApp()">🔧 رفع مشکل</button>
     <button type="button" class="menu-btn btn-red" id="btnLogout" style="background:linear-gradient(135deg,#555,#333);">🚪 خروج</button>
   </nav>
 
@@ -169,36 +170,38 @@
       }
 
       async function saveToCloud() {
-        if (!initialSyncDone) return;
-        if (!navigator.onLine) return; // بدون اینترنت ذخیره نکن
-        
-        // **چک کن ابر از ما جدیدتر نباشه**
-        try {
-          const { data } = await supabase.from('bermuda_data').select('details').eq('id', 1).single();
-          if (data && data.details) {
-            const cloudUpdate = data.details._lastUpdate || 0;
-            if (cloudUpdate > (DB._lastUpdate || 0)) {
-              // ابر از ما جدیدتره - ما نباید روش بنویسیم
-              console.log('⛔ ابر جدیدتره، ذخیره نکردم');
-              return;
-            }
-          }
-        } catch(e) {}
-
-        const now = Date.now();
-        DB._lastUpdate = now;
-        localChangePending = true;
-        try {
-          await supabase.from('bermuda_data').upsert({ 
-            id: 1, 
-            details: DB,
-            updated_at: new Date().toISOString()
-          });
-          setTimeout(() => { localChangePending = false; }, 500);
-        } catch(e) {
-          localChangePending = false;
-        }
+  if (!initialSyncDone) return false;
+  if (!navigator.onLine) return false;
+  
+  try {
+    const { data } = await supabase.from('bermuda_data').select('details').eq('id', 1).single();
+    if (data && data.details) {
+      const cloudUpdate = data.details._lastUpdate || 0;
+      if (cloudUpdate > (DB._lastUpdate || 0)) {
+        console.log('⛔ ابر جدیدتره، ذخیره نکردم');
+        return false;
       }
+    }
+  } catch(e) {
+    return false;
+  }
+
+  const now = Date.now();
+  DB._lastUpdate = now;
+  localChangePending = true;
+  try {
+    await supabase.from('bermuda_data').upsert({ 
+      id: 1, 
+      details: DB,
+      updated_at: new Date().toISOString()
+    });
+    setTimeout(() => { localChangePending = false; }, 500);
+    return true;
+  } catch(e) {
+    localChangePending = false;
+    return false;
+  }
+}
 
       async function loadFromCloud() {
         if (localChangePending) return;
@@ -295,22 +298,29 @@
         });
       }
 
-      function saveDB(notify = true) {
-        if (isSaving) { saveQueue = true; return; }
-        isSaving = true;
-        saveQueue = false;
-        
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
-          saveToCloud();
-          if (broadcastChannel && notify) {
-            broadcastChannel.postMessage({ type: 'sync', time: DB._lastUpdate });
-          }
-        } catch(e) {}
-        
-        isSaving = false;
-        if (saveQueue) saveDB(notify);
-      }
+      async function saveDB(notify = true) {
+  if (isSaving) { 
+    saveQueue = true; 
+    return false; 
+  }
+  isSaving = true;
+  saveQueue = false;
+  
+  let success = false;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+    success = await saveToCloud();
+    if (broadcastChannel && notify) {
+      broadcastChannel.postMessage({ type: 'sync', time: DB._lastUpdate });
+    }
+  } catch(e) {
+    success = false;
+  }
+  
+  isSaving = false;
+  if (saveQueue) return await saveDB(notify);
+  return success;
+}
 
       if (broadcastChannel) {
         broadcastChannel.onmessage = function(e) {
@@ -512,7 +522,8 @@
 
       window._showRegister = function() { document.getElementById('loginForm').classList.add('hidden'); document.getElementById('registerForm').classList.remove('hidden'); };
       window._showLogin = function() { document.getElementById('registerForm').classList.add('hidden'); document.getElementById('loginForm').classList.remove('hidden'); };
-      window._doRegister = function() {
+      window._doRegister = async function() {
+      await loadFromCloud();
       if (!navigator.onLine) {
   showToast('⚠️ برای ثبت‌نام، اینترنت باید روشن باشد.', true);
   return;
@@ -528,6 +539,7 @@
         const newUser = { username, password: pass, role: 'user', soroushId, banned: false };
         DB.users.push(newUser);
         saveDB();
+        await loadFromCloud();
         currentUser = newUser;
         document.getElementById('topMenu').style.display = 'flex';
         updateRoleButtons();
@@ -1239,11 +1251,21 @@
             ${messages.length > 0 ? `<button type="button" class="btn-dark btn-sm" onclick="window._clearInbox()" style="margin-top:12px;">🗑️ پاک کردن همه</button>` : ''}
           </div>`;
       }
-      window._clearInbox = function() {
-        DB.inboxMessages = DB.inboxMessages.filter(m => m.to !== currentUser.username);
-        saveDB();
-        renderInboxPage();
-      };
+      window._fixApp = function() {
+  localStorage.removeItem(STORAGE_KEY);
+  showToast('✅ حافظه پاک شد. لطفاً دوباره وارد شوید.');
+  setTimeout(() => {
+    currentUser = null;
+    document.getElementById('topMenu').style.display = 'none';
+    renderPage('login');
+  }, 1500);
+};
+
+window._clearInbox = function() {
+  DB.inboxMessages = DB.inboxMessages.filter(m => m.to !== currentUser.username);
+  saveDB();
+  renderInboxPage();
+};
 
       // ========== AGENT PANEL ==========
       function renderAgentPanel() {
