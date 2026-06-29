@@ -641,6 +641,8 @@ if (team) team.lastActive = new Date().toLocaleString('fa-IR');
       };
 
       window._submitTeamReg = function() {
+      const pendingReq = DB.requests.find(r => r.username === currentUser.username && r.type === 'team_registration' && r.status === 'pending');
+if (pendingReq) { showToast('⛔ شما یک درخواست تیم در حال بررسی دارید.', true); return; }
         const teamId = parseInt(document.getElementById('regTeam').value);
         const errEl = document.getElementById('regTeamError');
         if (!teamId) { errEl.innerHTML = '<div class="msg-error">لطفاً تیم مورد نظر را انتخاب کنید</div>'; return; }
@@ -681,6 +683,8 @@ if (team) team.lastActive = new Date().toLocaleString('fa-IR');
         overlay.classList.remove('hidden');
       };
       window._submitSell = function() {
+      const activeSales = DB.requests.filter(r => r.username === currentUser.username && r.type === 'sell_player' && r.status === 'pending').length;
+if (activeSales >= 2) { showToast('⛔ شما ۲ درخواست فروش فعال دارید. تا جواب نیومده نمی‌توانید درخواست جدید بدهید.', true); return; }
         const playerId = parseInt(document.getElementById('sellPlayer').value);
         const price = parseInt(document.getElementById('sellPrice').value);
         const errEl = document.getElementById('sellError');
@@ -1096,6 +1100,8 @@ if (team) team.lastActive = new Date().toLocaleString('fa-IR');
         overlay.classList.remove('hidden');
       };
       window._submitLetter = function() {
+      const pendingReq = DB.requests.find(r => r.fromUser === currentUser.username && r.type === 'agent_request' && r.status === 'pending');
+if (pendingReq) { showToast('⛔ شما یک درخواست مذاکره در حال بررسی دارید.', true); return; }
         const playerName = document.getElementById('letterPlayerName').value.trim();
         const position = document.getElementById('letterPlayerPos').value.trim();
         const nationality = document.getElementById('letterPlayerNat').value.trim();
@@ -1137,6 +1143,8 @@ if (team) team.lastActive = new Date().toLocaleString('fa-IR');
         }).join('');
       };
       window._buyFromMarket = function(playerId) {
+      const activeBuys = DB.requests.filter(r => r.username === currentUser.username && r.type === 'market_buy' && r.status === 'pending').length;
+if (activeBuys >= 4) { showToast('⛔ شما ۴ درخواست خرید فعال دارید. تا جواب نیومده نمی‌توانید درخواست جدید بدهید.', true); return; }
         if (!DB.seasonSettings.transfersOpen) { showToast('نقل و انتقالات بسته است.', true); return; }
         const player = DB.players.find(p => p.id === playerId);
         if (!player) return;
@@ -1296,6 +1304,7 @@ window._clearInbox = function() {
                 <div><strong>از:</strong> ${escapeHTML(req.fromUser)} | <strong>بازیکن:</strong> ${escapeHTML(req.playerName)} (${escapeHTML(req.position)}, ${escapeHTML(req.nationality)})</div>
                 <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
                   <button type="button" class="btn-green btn-sm" onclick="window._acceptAgentRequest(${req.id})">✅ قبول و شروع مذاکره</button>
+                  <button type="button" class="btn-red btn-sm" onclick="window._rejectAgentRequest(${req.id})">❌ رد</button>
                 </div>
               </div>
             `).join('') || '<p class="text-muted">درخواستی نیست</p>'}
@@ -1332,6 +1341,15 @@ window._clearInbox = function() {
           price: 0,
           duration: 0
         };
+        window._rejectAgentRequest = function(reqId) {
+  const req = DB.requests.find(r => r.id === reqId);
+  if (!req || req.status !== 'pending') { showToast('درخواست دیگر معتبر نیست.', true); return; }
+  req.status = 'rejected';
+  addInboxMessage(req.fromUser, `❌ نماینده ${currentUser.username} درخواست مذاکره شما را رد کرد.`);
+  saveDB();
+  renderPage('agent');
+  showToast('❌ درخواست رد شد.');
+};
         DB.negotiations.push(neg);
         addInboxMessage(req.fromUser, `✅ نماینده ${currentUser.username} درخواست شما را قبول کرد. مذاکره شروع شد. لطفاً به بخش نقل و انتقالات بروید.`);
         saveDB();
@@ -1914,6 +1932,7 @@ window._clearInbox = function() {
           saveDB();
           if (currentAdminSub) renderAdminSubPage(currentAdminSub);
           showToast('✅ درخواست تایید شد.');
+          
         } catch (e) {
           console.error(e);
           req.status = 'pending';
