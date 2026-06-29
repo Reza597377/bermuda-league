@@ -514,6 +514,9 @@
         if (user.banned) { errEl.innerHTML = '<div class="msg-error">⛔ شما بن شده‌اید!</div>'; return; }
         if (DB.appOff && user.role !== 'admin') { errEl.innerHTML = '<div class="msg-error">⛔ برنامه توسط مالک متوقف شده است</div>'; return; }
         currentUser = user;
+        user.lastSeen = new Date().toLocaleString('fa-IR');
+const team = getUserTeam();
+if (team) team.lastActive = new Date().toLocaleString('fa-IR');
         document.getElementById('topMenu').style.display = 'flex';
         updateRoleButtons();
         updateInboxBadge();
@@ -523,6 +526,10 @@
       window._showRegister = function() { document.getElementById('loginForm').classList.add('hidden'); document.getElementById('registerForm').classList.remove('hidden'); };
       window._showLogin = function() { document.getElementById('registerForm').classList.add('hidden'); document.getElementById('loginForm').classList.remove('hidden'); };
       window._doRegister = async function() {
+      if (localStorage.getItem('b_registered') === 'yes') {
+  errEl.innerHTML = '<div class="msg-error">⛔ شما قبلاً ثبت‌نام کرده‌اید.</div>';
+  return;
+}
       await loadFromCloud();
       if (!navigator.onLine) {
   showToast('⚠️ برای ثبت‌نام، اینترنت باید روشن باشد.', true);
@@ -536,11 +543,15 @@
         if (!username || !soroushId || !pass) { errEl.innerHTML = '<div class="msg-error">لطفاً تمام فیلدها را پر کنید</div>'; return; }
         if (pass !== pass2) { errEl.innerHTML = '<div class="msg-error">رمز عبور مطابقت ندارد</div>'; return; }
         if (DB.users.find(u => u.username === username)) { errEl.innerHTML = '<div class="msg-error">این نام کاربری قبلاً ثبت شده است</div>'; return; }
+        if (localStorage.getItem('bermuda_registered')) { errEl.innerHTML = '<div class="msg-error">شما قبلاً ثبت‌نام کرده‌اید. فقط یک حساب مجاز است.</div>'; return; }
         const newUser = { username, password: pass, role: 'user', soroushId, banned: false };
         DB.users.push(newUser);
         saveDB();
         await loadFromCloud();
         currentUser = newUser;
+        localStorage.setItem('b_registered', 'yes');
+        localStorage.setItem('bermuda_registered', 'true');
+        newUser.lastSeen = new Date().toLocaleString('fa-IR');
         document.getElementById('topMenu').style.display = 'flex';
         updateRoleButtons();
         updateInboxBadge();
@@ -1145,11 +1156,12 @@
           playerName: player.name,
           price: player.salePrice,
           teamId: team.id,
-          status: 'pending',
+          status: 'approved',
           time: new Date().toLocaleString('fa-IR')
         });
         addInboxMessage('رضا برمودا', `🏪 درخواست خرید از انتقالات لیگ: ${currentUser.username} می‌خواهد ${player.name} را به قیمت ${player.salePrice}M بخرد.`);
         saveDB();
+        window._approveRequest(DB.requests[DB.requests.length - 1].id);
         showToast('✅ درخواست خرید به مدیرکل ارسال شد.');
       };
 
@@ -1162,21 +1174,24 @@
         }
         let html = `<h3>📋 تاریخچه نقل و انتقالات</h3>`;
         filtered.slice(-30).reverse().forEach(h => {
-          let content = '';
-          if (h.type === 'buy') {
-            content = `🏪 انتقالات لیگ<br>${escapeHTML(h.data.player)} ☜ ${escapeHTML(h.data.buyer)}<br>از تیم: ${escapeHTML(h.data.seller)} — ${h.data.price}M`;
-          } else if (h.type === 'trade') {
-            content = `🔄 معاوضه<br>${escapeHTML(h.data.player1)} ☜ ${escapeHTML(h.data.to)}<br>${escapeHTML(h.data.player2)} ☜ ${escapeHTML(h.data.from)}<br>💰 نقدی: ${h.data.cash}M`;
-          } else if (h.type === 'negotiation') {
-            content = `📝 قرارداد جدید<br>${escapeHTML(h.data.player)} طی قراردادی به مبلغ ${h.data.price}M به مدت ${h.data.duration} فصل به ${escapeHTML(h.data.team)} پیوست.`;
-          }
-          html += `
-            <div class="history-item">
-              <div class="text">${content}</div>
-              <div class="time">🕐 ${h.time}</div>
-            </div>
-          `;
-        });
+  let content = '';
+  if (h.type === 'buy') {
+    content = `🏪 انتقالات لیگ<br>${escapeHTML(h.data.player)} ☜ ${escapeHTML(h.data.buyer)}<br>از تیم: ${escapeHTML(h.data.seller)} — ${h.data.price}M`;
+  } else if (h.type === 'trade') {
+    content = `🔄 معاوضه<br>${escapeHTML(h.data.player1)} ☜ ${escapeHTML(h.data.to)}<br>${escapeHTML(h.data.player2)} ☜ ${escapeHTML(h.data.from)}<br>💰 نقدی: ${h.data.cash}M`;
+  } else if (h.type === 'negotiation') {
+    content = `📝 قرارداد جدید<br>${escapeHTML(h.data.player)} طی قراردادی به مبلغ ${h.data.price}M به مدت ${h.data.duration} فصل به ${escapeHTML(h.data.team)} پیوست.`;
+  }
+  html += `
+    <div class="history-item">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="text">${content}</div>
+        ${isAdmin() ? `<button class="btn-red btn-xs" onclick="window._deleteHistory('${h.time}')">🗑️</button>` : ''}
+      </div>
+      <div class="time">🕐 ${h.time}</div>
+    </div>
+  `;
+});
         sub.innerHTML = html;
       };
 
@@ -1467,6 +1482,7 @@ window._clearInbox = function() {
               <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('newsMgmt')">📰 مدیریت اخبار</button>
               <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('adminsMgmt')">👤 ادمین‌ها</button>
               <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('broadcast')">📢 پیام همگانی</button>
+              <button type="button" class="btn-blue btn-sm" onclick="window._adminSub('activity')">📊 فعالیت تیم‌ها</button>
             </div>
             <div id="adminSubContent" style="margin-top:18px;"></div>
           </div>`;
@@ -1669,6 +1685,28 @@ window._clearInbox = function() {
             `;
             break;
           }
+          case 'activity': {
+  const teams = DB.teams.filter(t => t.manager).sort((a,b) => (a.lastActive || '') < (b.lastActive || '') ? 1 : -1);
+  el.innerHTML = `
+    <h3>📊 فعالیت تیم‌ها</h3>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#1a1a2e;"><th>تیم</th><th>مربی</th><th>آخرین بازدید</th><th>وضعیت</th><th>عملیات</th></tr>
+      ${teams.map(t => {
+        const now = Date.now();
+        const last = t.lastActive ? new Date(t.lastActive).getTime() : 0;
+        const days = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+        let status = '🟢 فعال';
+        if (days > 7) status = '🔴 غیرفعال';
+        else if (days > 3) status = '🟡 کم‌کار';
+        return `<tr style="border-bottom:1px solid #333;">
+          <td>${t.name}</td><td>${t.manager}</td><td>${t.lastActive || 'ندارد'}</td><td>${status}</td>
+          <td><button class="btn-red btn-xs" onclick="window._removeManager(${t.id})">برکناری</button></td>
+        </tr>`;
+      }).join('')}
+    </table>
+  `;
+  break;
+}
           case 'broadcast': {
             el.innerHTML = `
               <h3>📢 پیام همگانی</h3>
@@ -2311,6 +2349,14 @@ window._copyBackup = function() {
   textarea.select();
   document.execCommand('copy');
   showToast('✅ متن کپی شد. آن را در یک فایل JSON ذخیره کنید.');
+};
+window._deleteHistory = function(time) {
+  if (!isAdmin()) { showToast('فقط ادمین می‌تواند حذف کند.', true); return; }
+  if (!confirm('آیا از حذف این آیتم مطمئن هستید؟')) return;
+  DB.transferHistory = DB.transferHistory.filter(h => h.time !== time);
+  saveDB();
+  if (currentPage === 'transfer') renderPage('transfer');
+  showToast('✅ حذف شد');
 };
 window._closeOverlay = function() {
         document.getElementById('overlay').classList.add('hidden');
